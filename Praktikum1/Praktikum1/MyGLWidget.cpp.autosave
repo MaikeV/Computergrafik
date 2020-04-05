@@ -1,0 +1,35 @@
+#include "MyGLWidget.h"
+
+void MyGLWidget::setFOV(int value) {
+    this->fov = value;
+}
+
+void MyGLWidget::Angle(int value) {
+    this->angle = value;
+}
+
+void MyGLWidget::setProjectionMode() {
+    
+}
+
+void MyGLWidget::setNear(double value) {
+    this->near = value;
+}
+
+void MyGLWidget::setFar(double value) {
+    this->far = value;
+}
+
+void MyGLWidget::setRotationA(int value) {
+    if(this->rotationA != value) {
+        this->rotationA = value;
+    }
+}
+
+void MyGLWidget::setRotationB(int value) {
+    
+}
+
+void MyGLWidget::setRotationC(int value) {
+    
+}

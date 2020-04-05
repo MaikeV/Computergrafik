@@ -25,6 +25,12 @@
      <layout class="QHBoxLayout" name="hlMain">
       <item alignment="Qt::AlignLeft">
        <widget class="QGroupBox" name="vbControls">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="title">
          <string>Controls</string>
         </property>
@@ -78,6 +84,12 @@
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="minimum">
+                <number>45</number>
+               </property>
+               <property name="maximum">
+                <number>180</number>
+               </property>
                <property name="orientation">
                 <enum>Qt::Vertical</enum>
                </property>
@@ -89,7 +101,7 @@
                 <number>45</number>
                </property>
                <property name="maximum">
-                <number>90</number>
+                <number>180</number>
                </property>
               </widget>
              </item>
@@ -136,13 +148,20 @@
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="maximum">
+                <number>360</number>
+               </property>
                <property name="orientation">
                 <enum>Qt::Vertical</enum>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QSpinBox" name="spFOV"/>
+              <widget class="QSpinBox" name="spFOV">
+               <property name="maximum">
+                <number>360</number>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>
@@ -280,12 +299,18 @@
        </widget>
       </item>
       <item>
-       <widget class="QOpenGLWidget" name="openGLWdget">
+       <widget class="MyGLWidget" name="openGLWdget">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>480</width>
+          <height>0</height>
+         </size>
         </property>
        </widget>
       </item>
@@ -294,6 +319,78 @@
    </layout>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MyGLWidget</class>
+   <extends>QOpenGLWidget</extends>
+   <header>MyGLWidget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>spAngle</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>vsAngle</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>61</x>
+     <y>165</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>65</x>
+     <y>129</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spFOV</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>vsFOV</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>147</x>
+     <y>165</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>147</x>
+     <y>123</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>vsAngle</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spAngle</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>89</x>
+     <y>115</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>68</x>
+     <y>171</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>vsFOV</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spFOV</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>168</x>
+     <y>126</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>160</x>
+     <y>176</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

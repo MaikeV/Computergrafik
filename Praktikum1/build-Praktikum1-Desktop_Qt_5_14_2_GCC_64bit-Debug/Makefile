@@ -14,10 +14,10 @@ EQ            = =
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DQT_DEPRECATED_WARNINGS -DQT_QML_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
+DEFINES       = -DQT_DEPRECATED_WARNINGS -DQT_QML_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -g -Wall -Wextra -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -g -std=gnu++11 -Wall -Wextra -D_REENTRANT -fPIC $(DEFINES)
-INCPATH       = -I../Praktikum1 -I. -I/home/mauske/Development/Qt/5.14.2/gcc_64/include -I/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets -I/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui -I/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore -I. -isystem /usr/include/libdrm -I. -I/home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/linux-g++
+INCPATH       = -I../Praktikum1 -I. -I/home/mauske/Development/Qt/5.14.2/gcc_64/include -I/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtOpenGL -I/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets -I/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui -I/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore -I. -isystem /usr/include/libdrm -I. -I/home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/linux-g++
 QMAKE         = /home/mauske/Development/Qt/5.14.2/gcc_64/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -40,7 +40,7 @@ DISTNAME      = Praktikum11.0.0
 DISTDIR = /home/mauske/Studium/4_Semester/Computergrafik/Praktikum1/build-Praktikum1-Desktop_Qt_5_14_2_GCC_64bit-Debug/.tmp/Praktikum11.0.0
 LINK          = g++
 LFLAGS        = -Wl,-rpath,/home/mauske/Development/Qt/5.14.2/gcc_64/lib
-LIBS          = $(SUBLIBS) /home/mauske/Development/Qt/5.14.2/gcc_64/lib/libQt5Widgets.so /home/mauske/Development/Qt/5.14.2/gcc_64/lib/libQt5Gui.so /home/mauske/Development/Qt/5.14.2/gcc_64/lib/libQt5Core.so -lGL -lpthread   
+LIBS          = $(SUBLIBS) /home/mauske/Development/Qt/5.14.2/gcc_64/lib/libQt5OpenGL.so /home/mauske/Development/Qt/5.14.2/gcc_64/lib/libQt5Widgets.so /home/mauske/Development/Qt/5.14.2/gcc_64/lib/libQt5Gui.so /home/mauske/Development/Qt/5.14.2/gcc_64/lib/libQt5Core.so -lGL -lpthread   
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -52,9 +52,11 @@ OBJECTS_DIR   = ./
 
 ####### Files
 
-SOURCES       = ../Praktikum1/main.cpp \
+SOURCES       = ../Praktikum1/MyGLWidget.cpp \
+		../Praktikum1/main.cpp \
 		../Praktikum1/mainwindow.cpp moc_mainwindow.cpp
-OBJECTS       = main.o \
+OBJECTS       = MyGLWidget.o \
+		main.o \
 		mainwindow.o \
 		moc_mainwindow.o
 DIST          = /home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/features/spec_pre.prf \
@@ -213,6 +215,7 @@ DIST          = /home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/features/spec_
 		/home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/features/qt_config.prf \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/linux-g++/qmake.conf \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/features/spec_post.prf \
+		../Praktikum1/.qmake.stash \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/features/exclusive_builds.prf \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/features/toolchain.prf \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/features/default_pre.prf \
@@ -233,7 +236,9 @@ DIST          = /home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/features/spec_
 		/home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/features/exceptions.prf \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/features/yacc.prf \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/features/lex.prf \
-		../Praktikum1/Praktikum1.pro ../Praktikum1/mainwindow.h ../Praktikum1/main.cpp \
+		../Praktikum1/Praktikum1.pro ../Praktikum1/MyGLWidget.h \
+		../Praktikum1/mainwindow.h ../Praktikum1/MyGLWidget.cpp \
+		../Praktikum1/main.cpp \
 		../Praktikum1/mainwindow.cpp
 QMAKE_TARGET  = Praktikum1
 DESTDIR       = 
@@ -402,6 +407,7 @@ Makefile: ../Praktikum1/Praktikum1.pro /home/mauske/Development/Qt/5.14.2/gcc_64
 		/home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/features/qt_config.prf \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/linux-g++/qmake.conf \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/features/exclusive_builds.prf \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/features/toolchain.prf \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/features/default_pre.prf \
@@ -580,6 +586,7 @@ Makefile: ../Praktikum1/Praktikum1.pro /home/mauske/Development/Qt/5.14.2/gcc_64
 /home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/features/qt_config.prf:
 /home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/linux-g++/qmake.conf:
 /home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/features/spec_post.prf:
+.qmake.stash:
 /home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/features/exclusive_builds.prf:
 /home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/features/toolchain.prf:
 /home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/features/default_pre.prf:
@@ -616,8 +623,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../Praktikum1/mainwindow.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../Praktikum1/main.cpp ../Praktikum1/mainwindow.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../Praktikum1/MyGLWidget.h ../Praktikum1/mainwindow.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../Praktikum1/MyGLWidget.cpp ../Praktikum1/main.cpp ../Praktikum1/mainwindow.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../Praktikum1/mainwindow.ui $(DISTDIR)/
 
 
@@ -763,7 +770,7 @@ moc_mainwindow.cpp: ../Praktikum1/mainwindow.h \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qicon.h \
 		moc_predefs.h \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/bin/moc
-	/home/mauske/Development/Qt/5.14.2/gcc_64/bin/moc $(DEFINES) --include /home/mauske/Studium/4_Semester/Computergrafik/Praktikum1/build-Praktikum1-Desktop_Qt_5_14_2_GCC_64bit-Debug/moc_predefs.h -I/home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/linux-g++ -I/home/mauske/Studium/4_Semester/Computergrafik/Praktikum1/Praktikum1 -I/home/mauske/Development/Qt/5.14.2/gcc_64/include -I/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets -I/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui -I/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore -I. -I/usr/include/c++/9 -I/usr/include/x86_64-linux-gnu/c++/9 -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-linux-gnu/9/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/9/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../Praktikum1/mainwindow.h -o moc_mainwindow.cpp
+	/home/mauske/Development/Qt/5.14.2/gcc_64/bin/moc $(DEFINES) --include /home/mauske/Studium/4_Semester/Computergrafik/Praktikum1/build-Praktikum1-Desktop_Qt_5_14_2_GCC_64bit-Debug/moc_predefs.h -I/home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/linux-g++ -I/home/mauske/Studium/4_Semester/Computergrafik/Praktikum1/Praktikum1 -I/home/mauske/Development/Qt/5.14.2/gcc_64/include -I/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtOpenGL -I/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets -I/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui -I/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore -I. -I/usr/include/c++/9 -I/usr/include/x86_64-linux-gnu/c++/9 -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-linux-gnu/9/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/9/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../Praktikum1/mainwindow.h -o moc_mainwindow.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
@@ -773,7 +780,120 @@ compiler_uic_make_all: ui_mainwindow.h
 compiler_uic_clean:
 	-$(DEL_FILE) ui_mainwindow.h
 ui_mainwindow.h: ../Praktikum1/mainwindow.ui \
-		/home/mauske/Development/Qt/5.14.2/gcc_64/bin/uic
+		/home/mauske/Development/Qt/5.14.2/gcc_64/bin/uic \
+		../Praktikum1/MyGLWidget.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QWidget \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qwidget.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qtwidgetsglobal.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qtguiglobal.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qglobal.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qconfig-bootstrapped.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qconfig.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qtcore-config.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qsystemdetection.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qprocessordetection.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qcompilerdetection.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qtypeinfo.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qsysinfo.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qlogging.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qflags.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qatomic.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qbasicatomic.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qgenericatomic.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qatomic_msvc.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qglobalstatic.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qmutex.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qnumeric.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qversiontagging.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qtgui-config.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qtwidgets-config.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qwindowdefs.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qobjectdefs.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qnamespace.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qwindowdefs_win.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qobject.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qstring.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qchar.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qbytearray.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qrefcount.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qarraydata.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qstringliteral.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qstringalgorithms.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qstringview.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qstringbuilder.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qlist.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qalgorithms.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qiterator.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qhashfunctions.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qpair.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qvector.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qcontainertools_impl.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qpoint.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qbytearraylist.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qstringlist.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qregexp.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qstringmatcher.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qcoreevent.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qscopedpointer.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qmetatype.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qvarlengtharray.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qcontainerfwd.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qobject_impl.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qmargins.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qpaintdevice.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qrect.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qsize.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qpalette.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qcolor.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qrgb.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qrgba64.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qbrush.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qmatrix.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qpolygon.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qregion.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qdatastream.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qiodevice.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qline.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qtransform.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qpainterpath.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qimage.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qpixelformat.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qpixmap.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qsharedpointer.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qshareddata.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qhash.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qfont.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qfontmetrics.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qfontinfo.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qsizepolicy.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qcursor.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qkeysequence.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qevent.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qvariant.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qmap.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qdebug.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qtextstream.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qlocale.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qset.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qcontiguouscache.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qurl.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qurlquery.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qfile.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qfiledevice.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qvector2d.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qtouchdevice.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QOpenGLWidget \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qopenglwidget.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/QSurfaceFormat \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qsurfaceformat.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopengl.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qt_windows.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopengles2ext.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopenglext.h
 	/home/mauske/Development/Qt/5.14.2/gcc_64/bin/uic ../Praktikum1/mainwindow.ui -o ui_mainwindow.h
 
 compiler_yacc_decl_make_all:
@@ -785,6 +905,121 @@ compiler_lex_clean:
 compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean compiler_uic_clean 
 
 ####### Compile
+
+MyGLWidget.o: ../Praktikum1/MyGLWidget.cpp ../Praktikum1/MyGLWidget.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QWidget \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qwidget.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qtwidgetsglobal.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qtguiglobal.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qglobal.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qconfig-bootstrapped.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qconfig.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qtcore-config.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qsystemdetection.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qprocessordetection.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qcompilerdetection.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qtypeinfo.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qsysinfo.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qlogging.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qflags.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qatomic.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qbasicatomic.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qgenericatomic.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qatomic_msvc.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qglobalstatic.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qmutex.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qnumeric.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qversiontagging.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qtgui-config.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qtwidgets-config.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qwindowdefs.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qobjectdefs.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qnamespace.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qwindowdefs_win.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qobject.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qstring.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qchar.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qbytearray.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qrefcount.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qarraydata.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qstringliteral.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qstringalgorithms.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qstringview.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qstringbuilder.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qlist.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qalgorithms.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qiterator.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qhashfunctions.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qpair.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qvector.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qcontainertools_impl.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qpoint.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qbytearraylist.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qstringlist.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qregexp.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qstringmatcher.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qcoreevent.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qscopedpointer.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qmetatype.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qvarlengtharray.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qcontainerfwd.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qobject_impl.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qmargins.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qpaintdevice.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qrect.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qsize.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qpalette.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qcolor.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qrgb.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qrgba64.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qbrush.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qmatrix.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qpolygon.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qregion.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qdatastream.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qiodevice.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qline.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qtransform.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qpainterpath.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qimage.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qpixelformat.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qpixmap.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qsharedpointer.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qshareddata.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qhash.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qfont.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qfontmetrics.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qfontinfo.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qsizepolicy.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qcursor.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qkeysequence.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qevent.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qvariant.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qmap.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qdebug.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qtextstream.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qlocale.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qset.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qcontiguouscache.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qurl.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qurlquery.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qfile.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qfiledevice.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qvector2d.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qtouchdevice.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QOpenGLWidget \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qopenglwidget.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/QSurfaceFormat \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qsurfaceformat.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopengl.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qt_windows.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopengles2ext.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopenglext.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o MyGLWidget.o ../Praktikum1/MyGLWidget.cpp
 
 main.o: ../Praktikum1/main.cpp ../Praktikum1/mainwindow.h \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QMainWindow \
@@ -1011,7 +1246,53 @@ mainwindow.o: ../Praktikum1/mainwindow.cpp ../Praktikum1/mainwindow.h \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qtouchdevice.h \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qtabwidget.h \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qicon.h \
-		ui_mainwindow.h
+		ui_mainwindow.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/QVariant \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QApplication \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qapplication.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qcoreapplication.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qeventloop.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qdesktopwidget.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qguiapplication.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qinputmethod.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QDoubleSpinBox \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qspinbox.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qvalidator.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qregularexpression.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QFormLayout \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qformlayout.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QLayout \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qlayout.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qlayoutitem.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qboxlayout.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qgridlayout.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QGroupBox \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qgroupbox.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qframe.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QHBoxLayout \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QLabel \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qlabel.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QPushButton \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qpushbutton.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qabstractbutton.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QRadioButton \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qradiobutton.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QSlider \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qslider.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qabstractslider.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QSpinBox \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QVBoxLayout \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QWidget \
+		../Praktikum1/MyGLWidget.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QOpenGLWidget \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qopenglwidget.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/QSurfaceFormat \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qsurfaceformat.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopengl.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qt_windows.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopengles2ext.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopenglext.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../Praktikum1/mainwindow.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 
