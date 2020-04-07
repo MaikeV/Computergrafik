@@ -38,11 +38,11 @@ public:
     QHBoxLayout *Sliders;
     QVBoxLayout *Slider2;
     QLabel *labelAngle;
-    QSlider *vsAngle;
+    QSlider *vsFOV;
     QSpinBox *spAngle;
     QVBoxLayout *Slider1;
     QLabel *labelFOV;
-    QSlider *vsFOV;
+    QSlider *vsAngle;
     QSpinBox *spFOV;
     QGroupBox *gbProjection;
     QVBoxLayout *verticalLayout_3;
@@ -66,7 +66,7 @@ public:
     QDoubleSpinBox *dsbFar;
     QFormLayout *flControlButtons;
     QPushButton *rbReset;
-    MyGLWidget *openGLWdget;
+    MyGLWidget *openGLWidget;
 
     void setupUi(QMainWindow *MainWindow)
     {
@@ -110,18 +110,18 @@ public:
 
         Slider2->addWidget(labelAngle);
 
-        vsAngle = new QSlider(vbControls);
-        vsAngle->setObjectName(QString::fromUtf8("vsAngle"));
+        vsFOV = new QSlider(vbControls);
+        vsFOV->setObjectName(QString::fromUtf8("vsFOV"));
         QSizePolicy sizePolicy2(QSizePolicy::Preferred, QSizePolicy::Expanding);
         sizePolicy2.setHorizontalStretch(0);
         sizePolicy2.setVerticalStretch(0);
-        sizePolicy2.setHeightForWidth(vsAngle->sizePolicy().hasHeightForWidth());
-        vsAngle->setSizePolicy(sizePolicy2);
-        vsAngle->setMinimum(45);
-        vsAngle->setMaximum(180);
-        vsAngle->setOrientation(Qt::Vertical);
+        sizePolicy2.setHeightForWidth(vsFOV->sizePolicy().hasHeightForWidth());
+        vsFOV->setSizePolicy(sizePolicy2);
+        vsFOV->setMinimum(45);
+        vsFOV->setMaximum(180);
+        vsFOV->setOrientation(Qt::Vertical);
 
-        Slider2->addWidget(vsAngle);
+        Slider2->addWidget(vsFOV);
 
         spAngle = new QSpinBox(vbControls);
         spAngle->setObjectName(QString::fromUtf8("spAngle"));
@@ -149,14 +149,14 @@ public:
 
         Slider1->addWidget(labelFOV);
 
-        vsFOV = new QSlider(vbControls);
-        vsFOV->setObjectName(QString::fromUtf8("vsFOV"));
-        sizePolicy2.setHeightForWidth(vsFOV->sizePolicy().hasHeightForWidth());
-        vsFOV->setSizePolicy(sizePolicy2);
-        vsFOV->setMaximum(360);
-        vsFOV->setOrientation(Qt::Vertical);
+        vsAngle = new QSlider(vbControls);
+        vsAngle->setObjectName(QString::fromUtf8("vsAngle"));
+        sizePolicy2.setHeightForWidth(vsAngle->sizePolicy().hasHeightForWidth());
+        vsAngle->setSizePolicy(sizePolicy2);
+        vsAngle->setMaximum(360);
+        vsAngle->setOrientation(Qt::Vertical);
 
-        Slider1->addWidget(vsFOV);
+        Slider1->addWidget(vsAngle);
 
         spFOV = new QSpinBox(vbControls);
         spFOV->setObjectName(QString::fromUtf8("spFOV"));
@@ -279,13 +279,13 @@ public:
 
         hlMain->addWidget(vbControls, 0, Qt::AlignLeft);
 
-        openGLWdget = new MyGLWidget(centralWidget);
-        openGLWdget->setObjectName(QString::fromUtf8("openGLWdget"));
-        sizePolicy.setHeightForWidth(openGLWdget->sizePolicy().hasHeightForWidth());
-        openGLWdget->setSizePolicy(sizePolicy);
-        openGLWdget->setMinimumSize(QSize(480, 0));
+        openGLWidget = new MyGLWidget(centralWidget);
+        openGLWidget->setObjectName(QString::fromUtf8("openGLWidget"));
+        sizePolicy.setHeightForWidth(openGLWidget->sizePolicy().hasHeightForWidth());
+        openGLWidget->setSizePolicy(sizePolicy);
+        openGLWidget->setMinimumSize(QSize(480, 0));
 
-        hlMain->addWidget(openGLWdget);
+        hlMain->addWidget(openGLWidget);
 
 
         horizontalLayout_2->addLayout(hlMain);
@@ -293,10 +293,10 @@ public:
         MainWindow->setCentralWidget(centralWidget);
 
         retranslateUi(MainWindow);
-        QObject::connect(spAngle, SIGNAL(valueChanged(int)), vsAngle, SLOT(setValue(int)));
-        QObject::connect(spFOV, SIGNAL(valueChanged(int)), vsFOV, SLOT(setValue(int)));
-        QObject::connect(vsAngle, SIGNAL(valueChanged(int)), spAngle, SLOT(setValue(int)));
-        QObject::connect(vsFOV, SIGNAL(valueChanged(int)), spFOV, SLOT(setValue(int)));
+        QObject::connect(spAngle, SIGNAL(valueChanged(int)), vsFOV, SLOT(setValue(int)));
+        QObject::connect(spFOV, SIGNAL(valueChanged(int)), vsAngle, SLOT(setValue(int)));
+        QObject::connect(vsFOV, SIGNAL(valueChanged(int)), spAngle, SLOT(setValue(int)));
+        QObject::connect(vsAngle, SIGNAL(valueChanged(int)), spFOV, SLOT(setValue(int)));
 
         QMetaObject::connectSlotsByName(MainWindow);
     } // setupUi
