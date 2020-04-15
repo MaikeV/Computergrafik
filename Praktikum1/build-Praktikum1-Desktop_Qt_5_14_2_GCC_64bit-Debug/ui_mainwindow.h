@@ -65,7 +65,7 @@ public:
     QDoubleSpinBox *dsbNear;
     QDoubleSpinBox *dsbFar;
     QFormLayout *flControlButtons;
-    QPushButton *rbReset;
+    QPushButton *btnReset;
     MyGLWidget *openGLWidget;
 
     void setupUi(QMainWindow *MainWindow)
@@ -181,6 +181,7 @@ public:
 
         rbPerspective = new QRadioButton(gbProjection);
         rbPerspective->setObjectName(QString::fromUtf8("rbPerspective"));
+        rbPerspective->setChecked(true);
 
         verticalLayout_3->addWidget(rbPerspective);
 
@@ -257,6 +258,7 @@ public:
 
         dsbFar = new QDoubleSpinBox(gbClipping);
         dsbFar->setObjectName(QString::fromUtf8("dsbFar"));
+        dsbFar->setValue(2.000000000000000);
 
         Clipping->setWidget(1, QFormLayout::FieldRole, dsbFar);
 
@@ -268,10 +270,10 @@ public:
 
         flControlButtons = new QFormLayout();
         flControlButtons->setObjectName(QString::fromUtf8("flControlButtons"));
-        rbReset = new QPushButton(vbControls);
-        rbReset->setObjectName(QString::fromUtf8("rbReset"));
+        btnReset = new QPushButton(vbControls);
+        btnReset->setObjectName(QString::fromUtf8("btnReset"));
 
-        flControlButtons->setWidget(0, QFormLayout::SpanningRole, rbReset);
+        flControlButtons->setWidget(0, QFormLayout::SpanningRole, btnReset);
 
 
         verticalLayout->addLayout(flControlButtons);
@@ -297,6 +299,8 @@ public:
         QObject::connect(spFOV, SIGNAL(valueChanged(int)), vsAngle, SLOT(setValue(int)));
         QObject::connect(vsFOV, SIGNAL(valueChanged(int)), spAngle, SLOT(setValue(int)));
         QObject::connect(vsAngle, SIGNAL(valueChanged(int)), spFOV, SLOT(setValue(int)));
+        QObject::connect(openGLWidget, SIGNAL(adjustNear(double)), dsbNear, SLOT(setValue(double)));
+        QObject::connect(openGLWidget, SIGNAL(adjustFar(double)), dsbFar, SLOT(setValue(double)));
 
         QMetaObject::connectSlotsByName(MainWindow);
     } // setupUi
@@ -317,7 +321,7 @@ public:
         gbClipping->setTitle(QCoreApplication::translate("MainWindow", "Clipping Plane", nullptr));
         labelFar->setText(QCoreApplication::translate("MainWindow", "Far", nullptr));
         labelNear->setText(QCoreApplication::translate("MainWindow", "Near", nullptr));
-        rbReset->setText(QCoreApplication::translate("MainWindow", "Reset", nullptr));
+        btnReset->setText(QCoreApplication::translate("MainWindow", "Reset", nullptr));
     } // retranslateUi
 
 };

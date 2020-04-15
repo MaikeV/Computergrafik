@@ -185,6 +185,9 @@
               <property name="text">
                <string>Perspective</string>
               </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
              </widget>
             </item>
            </layout>
@@ -277,7 +280,11 @@
                <widget class="QDoubleSpinBox" name="dsbNear"/>
               </item>
               <item row="1" column="1">
-               <widget class="QDoubleSpinBox" name="dsbFar"/>
+               <widget class="QDoubleSpinBox" name="dsbFar">
+                <property name="value">
+                 <double>2.000000000000000</double>
+                </property>
+               </widget>
               </item>
              </layout>
             </item>
@@ -287,7 +294,7 @@
          <item>
           <layout class="QFormLayout" name="flControlButtons">
            <item row="0" column="0" colspan="2">
-            <widget class="QPushButton" name="rbReset">
+            <widget class="QPushButton" name="btnReset">
              <property name="text">
               <string>Reset</string>
              </property>
@@ -324,6 +331,10 @@
    <class>MyGLWidget</class>
    <extends>QOpenGLWidget</extends>
    <header>MyGLWidget.h</header>
+   <slots>
+    <signal>adjustNear(double)</signal>
+    <signal>adjustFar(double)</signal>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources/>
@@ -335,8 +346,8 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>61</x>
-     <y>165</y>
+     <x>85</x>
+     <y>199</y>
     </hint>
     <hint type="destinationlabel">
      <x>65</x>
@@ -351,8 +362,8 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>147</x>
-     <y>165</y>
+     <x>179</x>
+     <y>199</y>
     </hint>
     <hint type="destinationlabel">
      <x>147</x>
@@ -371,8 +382,8 @@
      <y>115</y>
     </hint>
     <hint type="destinationlabel">
-     <x>68</x>
-     <y>171</y>
+     <x>92</x>
+     <y>199</y>
     </hint>
    </hints>
   </connection>
@@ -389,6 +400,38 @@
     <hint type="destinationlabel">
      <x>160</x>
      <y>176</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>openGLWidget</sender>
+   <signal>adjustNear(double)</signal>
+   <receiver>dsbNear</receiver>
+   <slot>setValue(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>526</x>
+     <y>399</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>121</x>
+     <y>489</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>openGLWidget</sender>
+   <signal>adjustFar(double)</signal>
+   <receiver>dsbFar</receiver>
+   <slot>setValue(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>537</x>
+     <y>480</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>160</x>
+     <y>529</y>
     </hint>
    </hints>
   </connection>

@@ -38,15 +38,6 @@ void MyGLWidget::setProjectionMode(bool value) {
         emit this->projectionModeValueChanged (this->projectionModeIsPerspective);
         qInfo() << "ProjectionMode is Perspective: " << this->projectionModeIsPerspective;
     }
-
-//    if (this->projectionModeIsPerspective == value) {
-//        this->projectionModeIsPerspective = true;
-//    } else {
-//        this->projectionModeIsPerspective = false;
-//    }
-
-//    emit this->projectionModeValueChanged (this->projectionModeIsPerspective);
-
 }
 
 void MyGLWidget::setNear(double value) {
