@@ -54,14 +54,18 @@ OBJECTS_DIR   = ./
 
 SOURCES       = ../Praktikum1/MyGLWidget.cpp \
 		../Praktikum1/main.cpp \
-		../Praktikum1/mainwindow.cpp moc_MyGLWidget.cpp \
+		../Praktikum1/mainwindow.cpp qrc_res.cpp \
+		moc_MyGLWidget.cpp \
 		moc_mainwindow.cpp
 OBJECTS       = MyGLWidget.o \
 		main.o \
 		mainwindow.o \
+		qrc_res.o \
 		moc_MyGLWidget.o \
 		moc_mainwindow.o
-DIST          = /home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/features/spec_pre.prf \
+DIST          = ../Praktikum1/sample.frag \
+		../Praktikum1/sample.vert \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/features/spec_pre.prf \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/common/unix.conf \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/common/linux.conf \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/common/sanitize.conf \
@@ -430,7 +434,8 @@ Makefile: ../Praktikum1/Praktikum1.pro /home/mauske/Development/Qt/5.14.2/gcc_64
 		/home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/features/exceptions.prf \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/features/yacc.prf \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/features/lex.prf \
-		../Praktikum1/Praktikum1.pro
+		../Praktikum1/Praktikum1.pro \
+		../Praktikum1/res.qrc
 	$(QMAKE) -o Makefile ../Praktikum1/Praktikum1.pro -spec linux-g++ CONFIG+=debug CONFIG+=qml_debug
 /home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/features/spec_pre.prf:
 /home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/common/unix.conf:
@@ -610,6 +615,7 @@ Makefile: ../Praktikum1/Praktikum1.pro /home/mauske/Development/Qt/5.14.2/gcc_64
 /home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/features/yacc.prf:
 /home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/features/lex.prf:
 ../Praktikum1/Praktikum1.pro:
+../Praktikum1/res.qrc:
 qmake: FORCE
 	@$(QMAKE) -o Makefile ../Praktikum1/Praktikum1.pro -spec linux-g++ CONFIG+=debug CONFIG+=qml_debug
 
@@ -624,6 +630,7 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
+	$(COPY_FILE) --parents ../Praktikum1/res.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents /home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../Praktikum1/MyGLWidget.h ../Praktikum1/mainwindow.h $(DISTDIR)/
 	$(COPY_FILE) --parents ../Praktikum1/MyGLWidget.cpp ../Praktikum1/main.cpp ../Praktikum1/mainwindow.cpp $(DISTDIR)/
@@ -651,8 +658,15 @@ check: first
 
 benchmark: first
 
-compiler_rcc_make_all:
+compiler_rcc_make_all: qrc_res.cpp
 compiler_rcc_clean:
+	-$(DEL_FILE) qrc_res.cpp
+qrc_res.cpp: ../Praktikum1/res.qrc \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/bin/rcc \
+		../Praktikum1/sample.vert \
+		../Praktikum1/sample.frag
+	/home/mauske/Development/Qt/5.14.2/gcc_64/bin/rcc -name res ../Praktikum1/res.qrc -o qrc_res.cpp
+
 compiler_moc_predefs_make_all: moc_predefs.h
 compiler_moc_predefs_clean:
 	-$(DEL_FILE) moc_predefs.h
@@ -775,6 +789,23 @@ moc_MyGLWidget.cpp: ../Praktikum1/MyGLWidget.h \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qt_windows.h \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopengles2ext.h \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopenglext.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/QVector3D \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qvector3d.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/QOpenGLFunctions_3_3_Core \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopenglfunctions_3_3_core.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/QOpenGLVersionFunctions \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopenglversionfunctions.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopenglcontext.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/QObject \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/QScopedPointer \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/QOpenGLShaderProgram \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopenglshaderprogram.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qvector4d.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qmatrix4x4.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qquaternion.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qgenericmatrix.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/QOpenGLDebugLogger \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopengldebug.h \
 		moc_predefs.h \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/bin/moc
 	/home/mauske/Development/Qt/5.14.2/gcc_64/bin/moc $(DEFINES) --include /home/mauske/Studium/4_Semester/Computergrafik/Praktikum1/build-Praktikum1-Desktop_Qt_5_14_2_GCC_64bit-Debug/moc_predefs.h -I/home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/linux-g++ -I/home/mauske/Studium/4_Semester/Computergrafik/Praktikum1/Praktikum1 -I/home/mauske/Development/Qt/5.14.2/gcc_64/include -I/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtOpenGL -I/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets -I/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui -I/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore -I. -I/usr/include/c++/9 -I/usr/include/x86_64-linux-gnu/c++/9 -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-linux-gnu/9/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/9/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../Praktikum1/MyGLWidget.h -o moc_MyGLWidget.cpp
@@ -1012,7 +1043,24 @@ ui_mainwindow.h: ../Praktikum1/mainwindow.ui \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopengl.h \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qt_windows.h \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopengles2ext.h \
-		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopenglext.h
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopenglext.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/QVector3D \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qvector3d.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/QOpenGLFunctions_3_3_Core \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopenglfunctions_3_3_core.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/QOpenGLVersionFunctions \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopenglversionfunctions.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopenglcontext.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/QObject \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/QScopedPointer \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/QOpenGLShaderProgram \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopenglshaderprogram.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qvector4d.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qmatrix4x4.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qquaternion.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qgenericmatrix.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/QOpenGLDebugLogger \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopengldebug.h
 	/home/mauske/Development/Qt/5.14.2/gcc_64/bin/uic ../Praktikum1/mainwindow.ui -o ui_mainwindow.h
 
 compiler_yacc_decl_make_all:
@@ -1021,7 +1069,7 @@ compiler_yacc_impl_make_all:
 compiler_yacc_impl_clean:
 compiler_lex_make_all:
 compiler_lex_clean:
-compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean compiler_uic_clean 
+compiler_clean: compiler_rcc_clean compiler_moc_predefs_clean compiler_moc_header_clean compiler_uic_clean 
 
 ####### Compile
 
@@ -1137,7 +1185,26 @@ MyGLWidget.o: ../Praktikum1/MyGLWidget.cpp ../Praktikum1/MyGLWidget.h \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopengl.h \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qt_windows.h \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopengles2ext.h \
-		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopenglext.h
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopenglext.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/QVector3D \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qvector3d.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/QOpenGLFunctions_3_3_Core \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopenglfunctions_3_3_core.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/QOpenGLVersionFunctions \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopenglversionfunctions.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopenglcontext.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/QObject \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/QScopedPointer \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/QOpenGLShaderProgram \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopenglshaderprogram.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qvector4d.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qmatrix4x4.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qquaternion.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qgenericmatrix.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/QOpenGLDebugLogger \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopengldebug.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/QDebug \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/QKeyEvent
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o MyGLWidget.o ../Praktikum1/MyGLWidget.cpp
 
 main.o: ../Praktikum1/main.cpp ../Praktikum1/mainwindow.h \
@@ -1254,7 +1321,9 @@ main.o: ../Praktikum1/main.cpp ../Praktikum1/mainwindow.h \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qeventloop.h \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qdesktopwidget.h \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qguiapplication.h \
-		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qinputmethod.h
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qinputmethod.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/QSurfaceFormat \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qsurfaceformat.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../Praktikum1/main.cpp
 
 mainwindow.o: ../Praktikum1/mainwindow.cpp ../Praktikum1/mainwindow.h \
@@ -1366,8 +1435,44 @@ mainwindow.o: ../Praktikum1/mainwindow.cpp ../Praktikum1/mainwindow.h \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qtabwidget.h \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qicon.h \
 		ui_mainwindow.h \
-		../Praktikum1/MyGLWidget.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/QVariant \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QApplication \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qapplication.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qcoreapplication.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qeventloop.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qdesktopwidget.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qguiapplication.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qinputmethod.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QDoubleSpinBox \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qspinbox.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qvalidator.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qregularexpression.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QFormLayout \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qformlayout.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QLayout \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qlayout.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qlayoutitem.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qboxlayout.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qgridlayout.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QGroupBox \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qgroupbox.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qframe.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QHBoxLayout \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QLabel \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qlabel.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QPushButton \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qpushbutton.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qabstractbutton.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QRadioButton \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qradiobutton.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QSlider \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qslider.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qabstractslider.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QSpinBox \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QVBoxLayout \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QWidget \
+		../Praktikum1/MyGLWidget.h \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QOpenGLWidget \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qopenglwidget.h \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/QSurfaceFormat \
@@ -1376,8 +1481,28 @@ mainwindow.o: ../Praktikum1/mainwindow.cpp ../Praktikum1/mainwindow.h \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qt_windows.h \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopengles2ext.h \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopenglext.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/QVector3D \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qvector3d.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/QOpenGLFunctions_3_3_Core \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopenglfunctions_3_3_core.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/QOpenGLVersionFunctions \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopenglversionfunctions.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopenglcontext.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/QObject \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/QScopedPointer \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/QOpenGLShaderProgram \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopenglshaderprogram.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qvector4d.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qmatrix4x4.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qquaternion.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qgenericmatrix.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/QOpenGLDebugLogger \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qopengldebug.h \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/QDebug
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../Praktikum1/mainwindow.cpp
+
+qrc_res.o: qrc_res.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_res.o qrc_res.cpp
 
 moc_MyGLWidget.o: moc_MyGLWidget.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_MyGLWidget.o moc_MyGLWidget.cpp

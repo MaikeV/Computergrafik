@@ -283,8 +283,11 @@ public:
 
         openGLWidget = new MyGLWidget(centralWidget);
         openGLWidget->setObjectName(QString::fromUtf8("openGLWidget"));
-        sizePolicy.setHeightForWidth(openGLWidget->sizePolicy().hasHeightForWidth());
-        openGLWidget->setSizePolicy(sizePolicy);
+        QSizePolicy sizePolicy4(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        sizePolicy4.setHorizontalStretch(0);
+        sizePolicy4.setVerticalStretch(0);
+        sizePolicy4.setHeightForWidth(openGLWidget->sizePolicy().hasHeightForWidth());
+        openGLWidget->setSizePolicy(sizePolicy4);
         openGLWidget->setMinimumSize(QSize(480, 0));
 
         hlMain->addWidget(openGLWidget);

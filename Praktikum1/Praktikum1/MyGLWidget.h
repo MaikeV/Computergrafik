@@ -2,10 +2,13 @@
 #define MYGLWIDGET_H
 
 #include <QWidget>
-#include<QOpenGLWidget>
+#include <QOpenGLWidget>
 #include <QVector3D>
+#include <QOpenGLFunctions_3_3_Core>
+#include <QOpenGLShaderProgram>
+#include <QOpenGLDebugLogger>
 
-class MyGLWidget : public QOpenGLWidget {
+class MyGLWidget : public QOpenGLWidget, private  QOpenGLFunctions_3_3_Core{
     Q_OBJECT
 private:
     int fov = 45;
@@ -16,11 +19,22 @@ private:
     int rotationA = 0;
     int rotationB = 0;
     int rotationC = 0;
+    GLuint m_vao;
+    GLuint m_vbo;
     QVector3D m_CameraPos = QVector3D(0, 0, 0);
+    QOpenGLShaderProgram *m_prog;
+    QOpenGLDebugLogger *debugLogger;
 
 public:
     MyGLWidget(QWidget *parent) : QOpenGLWidget(parent) {
         setFocusPolicy(Qt::StrongFocus);
+    }
+
+    ~MyGLWidget() {
+        makeCurrent ();
+        delete m_prog;
+        glDeleteBuffers (1, &m_vbo);
+        glDeleteVertexArrays(1,&m_vao);
     }
 
     int getFOV() const {
@@ -31,7 +45,21 @@ public:
         return angle;
     }
 
-    void keyPressEvent(QKeyEvent*event);
+    void keyPressEvent(QKeyEvent*event) override;
+
+    //set up any required OpenGL resources
+    //called once before the first call to paint and resize
+    //Initialisieren
+    void initializeGL() override;
+
+    //called whenever the widget needs to be painted
+    //Rendering der aktuellen Szene
+    void paintGL() override;
+
+    //called whenever the widget has been resized
+    //Reinitialisieren
+    void resizeGL(int w, int h) override;
+
 
 public slots:
     void setFOV(int value);
@@ -42,6 +70,7 @@ public slots:
     void setRotationA(int value);
     void setRotationB(int value);
     void setRotationC(int value);
+    void onMessageLogged(QOpenGLDebugMessage message);
 
 signals:
     void adjustNear(double value);
