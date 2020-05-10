@@ -198,6 +198,7 @@ public:
         Rotations->setHorizontalSpacing(6);
         hsRotationA = new QSlider(gbRotation);
         hsRotationA->setObjectName(QString::fromUtf8("hsRotationA"));
+        hsRotationA->setMaximum(255);
         hsRotationA->setOrientation(Qt::Horizontal);
 
         Rotations->setWidget(1, QFormLayout::FieldRole, hsRotationA);

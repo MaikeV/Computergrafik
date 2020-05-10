@@ -664,7 +664,8 @@ compiler_rcc_clean:
 qrc_res.cpp: ../Praktikum1/res.qrc \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/bin/rcc \
 		../Praktikum1/sample.vert \
-		../Praktikum1/sample.frag
+		../Praktikum1/sample.frag \
+		../Praktikum1/texture.jpg
 	/home/mauske/Development/Qt/5.14.2/gcc_64/bin/rcc -name res ../Praktikum1/res.qrc -o qrc_res.cpp
 
 compiler_moc_predefs_make_all: moc_predefs.h

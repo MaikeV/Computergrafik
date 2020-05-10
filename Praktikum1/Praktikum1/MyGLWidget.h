@@ -21,9 +21,18 @@ private:
     int rotationC = 0;
     GLuint m_vao;
     GLuint m_vbo;
+    GLuint m_tex;
     QVector3D m_CameraPos = QVector3D(0, 0, 0);
     QOpenGLShaderProgram *m_prog;
     QOpenGLDebugLogger *debugLogger;
+
+    struct Vertex {
+        GLfloat position[2];
+        GLfloat color[3];
+    };
+
+    float rgbToFloat(int rgb);
+    void printContextInfo();
 
 public:
     MyGLWidget(QWidget *parent) : QOpenGLWidget(parent) {
@@ -59,7 +68,6 @@ public:
     //called whenever the widget has been resized
     //Reinitialisieren
     void resizeGL(int w, int h) override;
-
 
 public slots:
     void setFOV(int value);

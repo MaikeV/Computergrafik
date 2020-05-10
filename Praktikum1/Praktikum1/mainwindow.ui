@@ -209,6 +209,9 @@
               </property>
               <item row="1" column="1">
                <widget class="QSlider" name="hsRotationA">
+                <property name="maximum">
+                 <number>255</number>
+                </property>
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>

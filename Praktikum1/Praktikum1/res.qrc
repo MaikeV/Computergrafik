@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>sample.frag</file>
         <file>sample.vert</file>
+        <file>texture.jpg</file>
     </qresource>
 </RCC>
