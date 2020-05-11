@@ -86,37 +86,41 @@ void MyGLWidget::initializeGL() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-    m_prog = new QOpenGLShaderProgram();
-    m_prog2 = new QOpenGLShaderProgram();
-    m_prog->addShaderFromSourceFile(QOpenGLShader::Vertex,":/sample.vert");
-    m_prog->addShaderFromSourceFile(QOpenGLShader::Fragment,":/sample.frag");
-    m_prog2->addShaderFromSourceFile(QOpenGLShader::Vertex,":/sample.vert");
-    m_prog2->addShaderFromSourceFile(QOpenGLShader::Fragment,":/colorShader.frag");
-    m_prog->link();
-    m_prog2->link();
-    Q_ASSERT(m_prog->isLinked());
-    Q_ASSERT(m_prog2->isLinked());
+    m_progTexture = new QOpenGLShaderProgram();
+    m_progColor = new QOpenGLShaderProgram();
+    m_progTexture->addShaderFromSourceFile(QOpenGLShader::Vertex,":/sample.vert");
+    m_progTexture->addShaderFromSourceFile(QOpenGLShader::Fragment,":/sample.frag");
+    m_progColor->addShaderFromSourceFile(QOpenGLShader::Vertex,":/sample.vert");
+    m_progColor->addShaderFromSourceFile(QOpenGLShader::Fragment,":/colorShader.frag");
+    m_progTexture->link();
+    m_progColor->link();
+    Q_ASSERT(m_progTexture->isLinked());
+    Q_ASSERT(m_progColor->isLinked());
 }
 
 void MyGLWidget::paintGL() {
     glClear (GL_COLOR_BUFFER_BIT);
 
-    //bind Resources
-    //glBindVertexArray(m_vao);
+    QVector3D rotAxis(0, 1, 0);
+    QMatrix4x4 rotMat;
 
-    m_prog2->bind();
+    m_progColor->bind();
 
-//    qDebug() << rgbToFloat (this->rotationA);
-    m_prog2->setUniformValue (0, rgbToFloat(this->rotationA));
+    rotMat.rotate(this->rotationB, rotAxis);
+
+    m_progColor->setUniformValue (0, rgbToFloat(this->rotationA));
+    m_progColor->setUniformValue (3, rotMat);
 
     glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
 
     glActiveTexture (GL_TEXTURE0);
     glBindTexture (GL_TEXTURE_2D, m_tex);
 
-    m_prog->bind();
-    m_prog->setUniformValue(1, 0);
-    m_prog->setUniformValue(2, (this->rotationB/10.0f));
+    m_progTexture->bind();
+    m_progTexture->setUniformValue(1, 0);
+    m_progTexture->setUniformValue(2, (this->rotationC/10.0f));
+
+    m_progTexture->setUniformValue(3, rotMat);
 
     void* const offset = reinterpret_cast <void* const>(sizeof(GLuint) * 3);
     glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, offset);

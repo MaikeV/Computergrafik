@@ -24,8 +24,8 @@ private:
     GLuint m_ibo;
     GLuint m_tex;
     QVector3D m_CameraPos = QVector3D(0, 0, 0);
-    QOpenGLShaderProgram *m_prog;
-    QOpenGLShaderProgram *m_prog2;
+    QOpenGLShaderProgram *m_progTexture;
+    QOpenGLShaderProgram *m_progColor;
     QOpenGLDebugLogger *debugLogger;
 
     struct Vertex {
@@ -44,7 +44,7 @@ public:
 
     ~MyGLWidget() {
         makeCurrent ();
-        delete m_prog;
+        delete m_progTexture;
         glDeleteBuffers (1, &m_vbo);
         glDeleteVertexArrays(1, &m_vao);
         glDeleteTextures(1, &m_tex);

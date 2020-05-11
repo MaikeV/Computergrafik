@@ -206,8 +206,8 @@ public:
 
         hsRotationB = new QSlider(gbRotation);
         hsRotationB->setObjectName(QString::fromUtf8("hsRotationB"));
-        hsRotationB->setMinimum(-10);
-        hsRotationB->setMaximum(10);
+        hsRotationB->setMinimum(0);
+        hsRotationB->setMaximum(180);
         hsRotationB->setSingleStep(1);
         hsRotationB->setSliderPosition(0);
         hsRotationB->setOrientation(Qt::Horizontal);
@@ -216,6 +216,8 @@ public:
 
         hsRotationC = new QSlider(gbRotation);
         hsRotationC->setObjectName(QString::fromUtf8("hsRotationC"));
+        hsRotationC->setMinimum(-10);
+        hsRotationC->setMaximum(10);
         hsRotationC->setOrientation(Qt::Horizontal);
 
         Rotations->setWidget(3, QFormLayout::FieldRole, hsRotationC);

@@ -9,6 +9,7 @@ layout(location = 2) in vec2 aTextureCoordinates;
 layout(location = 0) out vec3 vColor;
 layout(location = 1) out vec2 vTextureCoordinates;
 
+layout(location = 3) uniform mat4x4 uRotMat;
 
 void main() {
     //define vertex position in space.
@@ -17,4 +18,8 @@ void main() {
     vTextureCoordinates = aTextureCoordinates;
 
     gl_Position = vec4(aPosition, 0.0, 1.0);
+
+    vec4 pos = vec4(aPosition, 0.0, 1.0);
+
+    gl_Position = uRotMat * pos;
 }
