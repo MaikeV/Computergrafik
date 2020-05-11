@@ -3,5 +3,6 @@
         <file>sample.frag</file>
         <file>sample.vert</file>
         <file>texture.jpg</file>
+        <file>colorShader.frag</file>
     </qresource>
 </RCC>

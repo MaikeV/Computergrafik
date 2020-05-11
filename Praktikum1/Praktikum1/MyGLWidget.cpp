@@ -28,9 +28,10 @@ void MyGLWidget::initializeGL() {
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 
     Vertex vert[] = {
-        {{0.0f, 0.5f},      {1.0f, 0.0f, 0.0f}},
-        {{0.5f, -0.5f},     {0.0f, 1.0f, 0.0f}},
-        {{-0.5f, -0.5f},    {0.0f, 0.0f, 1.0f}},
+        {{-0.25f, 0.5f},     {1.0f, 0.0f, 0.0f},     {0.5f, 1.0f}},  //top
+        {{0.25f, -0.5f},     {0.0f, 1.0f, 0.0f},     {1.0f, 0.0f}},  //right
+        {{-0.75f, -0.5f},    {0.0f, 0.0f, 1.0f},     {0.0f, 0.0f}},  //left
+        {{0.75f, 0.5f},      {0.0f, 0.0f, 0.0f},     {1.0f, 1.0f}},  //triangle2
     };
 
     //copy data
@@ -41,6 +42,12 @@ void MyGLWidget::initializeGL() {
     //Start recording buffer and attribute metadata
     glBindVertexArray(m_vao);
 
+    //construct and fill IBO with data
+    GLuint data[] = {2, 1, 0, 1, 0, 3};
+    glGenBuffers(1, &m_ibo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
+
     #define OFS(s,a) reinterpret_cast<void* const>(offsetof(s,a))
 
     glEnableVertexAttribArray (0);
@@ -48,6 +55,9 @@ void MyGLWidget::initializeGL() {
 
     glEnableVertexAttribArray (1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), OFS(Vertex, color));
+
+    glEnableVertexAttribArray (2);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), OFS(Vertex, textureCoordinates));
 
     #undef OFS
 
@@ -58,28 +68,58 @@ void MyGLWidget::initializeGL() {
     glGenTextures(1, &m_tex);
     glBindTexture(GL_TEXTURE_2D, m_tex);
 
+    //fill with pixel data
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, texImg.width(),
+                 texImg.height(), 0, GL_BGRA,GL_UNSIGNED_BYTE,
+                 texImg.bits());
+
+    //set filtering (interpolation) options
+    //without these commands, _sampling will return black_
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    //set wrap mode to "clamp to edge"
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    //set wrap mode to "repeat"
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
     m_prog = new QOpenGLShaderProgram();
+    m_prog2 = new QOpenGLShaderProgram();
     m_prog->addShaderFromSourceFile(QOpenGLShader::Vertex,":/sample.vert");
     m_prog->addShaderFromSourceFile(QOpenGLShader::Fragment,":/sample.frag");
+    m_prog2->addShaderFromSourceFile(QOpenGLShader::Vertex,":/sample.vert");
+    m_prog2->addShaderFromSourceFile(QOpenGLShader::Fragment,":/colorShader.frag");
     m_prog->link();
+    m_prog2->link();
     Q_ASSERT(m_prog->isLinked());
+    Q_ASSERT(m_prog2->isLinked());
 }
 
 void MyGLWidget::paintGL() {
     glClear (GL_COLOR_BUFFER_BIT);
 
     //bind Resources
-    glBindVertexArray(m_vao);
+    //glBindVertexArray(m_vao);
+
+    m_prog2->bind();
+
+//    qDebug() << rgbToFloat (this->rotationA);
+    m_prog2->setUniformValue (0, rgbToFloat(this->rotationA));
+
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
+
+    glActiveTexture (GL_TEXTURE0);
+    glBindTexture (GL_TEXTURE_2D, m_tex);
+
     m_prog->bind();
+    m_prog->setUniformValue(1, 0);
+    m_prog->setUniformValue(2, (this->rotationB/10.0f));
 
-    //starting at vertex 0, render 3 vertices(=>1 triangle)
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-
-    //Stop recording
-    glBindVertexArray(0);
-
-    qDebug() << rgbToFloat (this->rotationA);
-    m_prog->setUniformValue (0, rgbToFloat(this->rotationA));
+    void* const offset = reinterpret_cast <void* const>(sizeof(GLuint) * 3);
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, offset);
 
     update();
 }

@@ -21,14 +21,17 @@ private:
     int rotationC = 0;
     GLuint m_vao;
     GLuint m_vbo;
+    GLuint m_ibo;
     GLuint m_tex;
     QVector3D m_CameraPos = QVector3D(0, 0, 0);
     QOpenGLShaderProgram *m_prog;
+    QOpenGLShaderProgram *m_prog2;
     QOpenGLDebugLogger *debugLogger;
 
     struct Vertex {
         GLfloat position[2];
         GLfloat color[3];
+        GLfloat textureCoordinates[2];
     };
 
     float rgbToFloat(int rgb);
@@ -43,7 +46,9 @@ public:
         makeCurrent ();
         delete m_prog;
         glDeleteBuffers (1, &m_vbo);
-        glDeleteVertexArrays(1,&m_vao);
+        glDeleteVertexArrays(1, &m_vao);
+        glDeleteTextures(1, &m_tex);
+        glDeleteBuffers(1, &m_ibo);
     }
 
     int getFOV() const {

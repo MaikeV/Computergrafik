@@ -63,7 +63,8 @@ OBJECTS       = MyGLWidget.o \
 		qrc_res.o \
 		moc_MyGLWidget.o \
 		moc_mainwindow.o
-DIST          = ../Praktikum1/sample.frag \
+DIST          = ../Praktikum1/colorShader.frag \
+		../Praktikum1/sample.frag \
 		../Praktikum1/sample.vert \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/features/spec_pre.prf \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/mkspecs/common/unix.conf \
@@ -665,6 +666,7 @@ qrc_res.cpp: ../Praktikum1/res.qrc \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/bin/rcc \
 		../Praktikum1/sample.vert \
 		../Praktikum1/sample.frag \
+		../Praktikum1/colorShader.frag \
 		../Praktikum1/texture.jpg
 	/home/mauske/Development/Qt/5.14.2/gcc_64/bin/rcc -name res ../Praktikum1/res.qrc -o qrc_res.cpp
 
