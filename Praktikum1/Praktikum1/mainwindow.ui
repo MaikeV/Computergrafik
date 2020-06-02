@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>914</width>
-    <height>607</height>
+    <height>613</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -151,6 +151,9 @@
                <property name="maximum">
                 <number>360</number>
                </property>
+               <property name="value">
+                <number>75</number>
+               </property>
                <property name="orientation">
                 <enum>Qt::Vertical</enum>
                </property>
@@ -161,11 +164,21 @@
                <property name="maximum">
                 <number>360</number>
                </property>
+               <property name="value">
+                <number>75</number>
+               </property>
               </widget>
              </item>
             </layout>
            </item>
           </layout>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="chbSetCamera">
+           <property name="text">
+            <string>SetCamera</string>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QGroupBox" name="gbProjection">
@@ -207,16 +220,30 @@
               <property name="horizontalSpacing">
                <number>6</number>
               </property>
+              <item row="1" column="0">
+               <widget class="QLabel" name="labelA">
+                <property name="text">
+                 <string>Ring A</string>
+                </property>
+               </widget>
+              </item>
               <item row="1" column="1">
                <widget class="QSlider" name="hsRotationA">
                 <property name="maximum">
-                 <number>255</number>
+                 <number>180</number>
                 </property>
                 <property name="sliderPosition">
                  <number>0</number>
                 </property>
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="labelB">
+                <property name="text">
+                 <string>Ring B</string>
                 </property>
                </widget>
               </item>
@@ -239,37 +266,30 @@
                 </property>
                </widget>
               </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="labelC">
+                <property name="text">
+                 <string>Ring C</string>
+                </property>
+               </widget>
+              </item>
               <item row="3" column="1">
                <widget class="QSlider" name="hsRotationC">
                 <property name="minimum">
-                 <number>-10</number>
+                 <number>0</number>
                 </property>
                 <property name="maximum">
-                 <number>10</number>
+                 <number>180</number>
                 </property>
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
                </widget>
               </item>
-              <item row="1" column="0">
-               <widget class="QLabel" name="labelA">
+              <item row="0" column="0" colspan="2">
+               <widget class="QCheckBox" name="chbAnimation">
                 <property name="text">
-                 <string>Ring A</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="0">
-               <widget class="QLabel" name="labelB">
-                <property name="text">
-                 <string>Ring B</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="0">
-               <widget class="QLabel" name="labelC">
-                <property name="text">
-                 <string>Ring C</string>
+                 <string>Animation</string>
                 </property>
                </widget>
               </item>
@@ -301,12 +321,19 @@
                </widget>
               </item>
               <item row="0" column="1">
-               <widget class="QDoubleSpinBox" name="dsbNear"/>
+               <widget class="QDoubleSpinBox" name="dsbNear">
+                <property name="value">
+                 <double>0.100000000000000</double>
+                </property>
+               </widget>
               </item>
               <item row="1" column="1">
                <widget class="QDoubleSpinBox" name="dsbFar">
+                <property name="maximum">
+                 <double>100.000000000000000</double>
+                </property>
                 <property name="value">
-                 <double>2.000000000000000</double>
+                 <double>100.000000000000000</double>
                 </property>
                </widget>
               </item>

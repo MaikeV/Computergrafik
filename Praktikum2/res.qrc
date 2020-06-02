@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>sample.frag</file>
+        <file>sample.vert</file>
+        <file>texture.jpg</file>
+        <file>colorShader.frag</file>
+        <file>gimbal.obj</file>
+        <file>sphere.obj</file>
+    </qresource>
+</RCC>

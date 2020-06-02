@@ -7,35 +7,60 @@
 #include <QOpenGLFunctions_3_3_Core>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLDebugLogger>
+#include <QElapsedTimer>
+#include "modelloader/model.h"
+#include "skybox.h"
 
-class MyGLWidget : public QOpenGLWidget, private  QOpenGLFunctions_3_3_Core{
+class MyGLWidget : public QOpenGLWidget, private QOpenGLFunctions_3_3_Core {
     Q_OBJECT
 private:
     int fov = 45;
-    int angle = 0;
+    int angle = 75;
     bool projectionModeIsPerspective = true;
-    double near = 0;
-    double far = 2;
+    bool isAnimated = false;
+    bool cameraCenter = false;
+    double near = 0.1;
+    double far = 100;
     int rotationA = 0;
     int rotationB = 0;
     int rotationC = 0;
-    GLuint m_vao;
-    GLuint m_vbo;
-    GLuint m_ibo;
     GLuint m_tex;
-    QVector3D m_CameraPos = QVector3D(0, 0, 0);
+    GLuint m_tex2;
+    GLuint m_cubeTex;
+    QVector3D m_CameraPos;
+    QVector3D cameraTarget = QVector3D(0.0f, 0.0f, 0.0f);
+    QVector3D up = QVector3D(0.0f, 1.0f, 0.0f);
+    QMatrix4x4 cameraDirection;
     QOpenGLShaderProgram *m_progTexture;
     QOpenGLShaderProgram *m_progColor;
     QOpenGLDebugLogger *debugLogger;
+    Model model;
+    Model model2;
+    Model model3;
+    Model sphere;
+    SkyBox skybox;
+    QMatrix4x4 projMat;
+    QMatrix4x4 mvpMat;
+    QElapsedTimer timer;
+
+//    struct Vertex {
+//        GLfloat position[2];
+//        GLfloat color[3];
+//        GLfloat textureCoordinates[2];
+//    };
 
     struct Vertex {
-        GLfloat position[2];
-        GLfloat color[3];
-        GLfloat textureCoordinates[2];
+        GLfloat position[3];
+        GLfloat normal[3];
+        GLfloat texCoord[2];
     };
 
+    void scaleTransformRotate();
     float rgbToFloat(int rgb);
     void printContextInfo();
+    GLuint initTexture(GLuint m_tex, QImage texImage);
+    void drawTexture(GLuint tex);
+    void updateProjectionMatrix();
 
 public:
     MyGLWidget(QWidget *parent) : QOpenGLWidget(parent) {
@@ -44,11 +69,13 @@ public:
 
     ~MyGLWidget() {
         makeCurrent ();
-        delete m_progTexture;
-        glDeleteBuffers (1, &m_vbo);
-        glDeleteVertexArrays(1, &m_vao);
+        //delete m_progTexture;
+//        glDeleteBuffers (1, &m_vbo);
+//        glDeleteVertexArrays(1, &m_vao);
         glDeleteTextures(1, &m_tex);
-        glDeleteBuffers(1, &m_ibo);
+//        glDeleteBuffers(1, &m_ibo);
+        delete m_progColor;
+        model.finiGL();
     }
 
     int getFOV() const {
@@ -75,6 +102,8 @@ public:
     void resizeGL(int w, int h) override;
 
 public slots:
+    void setIsAnimated(bool value);
+    void setCameraToCenter(bool value);
     void setFOV(int value);
     void setAngle(int value);
     void setProjectionMode(bool value);
@@ -86,6 +115,8 @@ public slots:
     void onMessageLogged(QOpenGLDebugMessage message);
 
 signals:
+    void cameraToCenterChanged(bool cameraToCenter);
+    void isAnimatedChanged(bool isAnimated);
     void adjustNear(double value);
     void adjustFar(double value);
     void fovValueChanged(int value);

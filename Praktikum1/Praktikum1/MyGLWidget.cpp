@@ -19,52 +19,132 @@ void MyGLWidget::initializeGL() {
 
     glClearColor (0.2f, 0.2f, 0.2f, 0.1f);
 
+    //textures
     QImage texImg;
+    QImage texLava;
     texImg.load(":/texture.jpg");
+    texLava.load(":/TextureLava.jpg");
     Q_ASSERT(!texImg.isNull());
+    Q_ASSERT(!texLava.isNull());
 
-    //create buffer object
-    glGenBuffers (1, &m_vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-
-    Vertex vert[] = {
-        {{-0.25f, 0.5f},     {1.0f, 0.0f, 0.0f},     {0.5f, 1.0f}},  //top
-        {{0.25f, -0.5f},     {0.0f, 1.0f, 0.0f},     {1.0f, 0.0f}},  //right
-        {{-0.75f, -0.5f},    {0.0f, 0.0f, 1.0f},     {0.0f, 0.0f}},  //left
-        {{0.75f, 0.5f},      {0.0f, 0.0f, 0.0f},     {1.0f, 1.0f}},  //triangle2
-    };
-
-    //copy data
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vert), vert, GL_STATIC_DRAW);
-
-    glGenVertexArrays (1, &m_vao);
-
-    //Start recording buffer and attribute metadata
-    glBindVertexArray(m_vao);
-
-    //construct and fill IBO with data
-    GLuint data[] = {2, 1, 0, 1, 0, 3};
-    glGenBuffers(1, &m_ibo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
-
-    #define OFS(s,a) reinterpret_cast<void* const>(offsetof(s,a))
-
-    glEnableVertexAttribArray (0);
-    glVertexAttribPointer (0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), OFS(Vertex, position));
-
-    glEnableVertexAttribArray (1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), OFS(Vertex, color));
-
-    glEnableVertexAttribArray (2);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), OFS(Vertex, textureCoordinates));
-
-    #undef OFS
+    //modelloading
+    model.initGL(":/gimbal_suspension.obj");
+    model2.initGL(":/gimbal_suspension.obj");
+    model3.initGL(":/gimbal.obj");
+    sphere.initGL(":/sphere.obj");
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
     //Create texture object
+    m_tex = initTexture(m_tex, texImg);
+    m_tex2 = initTexture(m_tex2, texLava);
+
+    //culling
+    glEnable(GL_CULL_FACE);
+    //glCullFace (GL_FRONT);
+
+    updateProjectionMatrix();
+
+    skybox.init();
+
+    timer.start();
+
+    //shader
+    m_progColor = new QOpenGLShaderProgram();
+    m_progColor->addShaderFromSourceFile(QOpenGLShader::Vertex,":/sample.vert");
+    m_progColor->addShaderFromSourceFile(QOpenGLShader::Fragment,":/colorShader.frag");
+    m_progColor->link();
+    Q_ASSERT(m_progColor->isLinked());
+}
+
+void MyGLWidget::paintGL() {
+    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    //depth test
+    glEnable(GL_DEPTH_TEST);
+
+    m_progColor->bind();
+
+    scaleTransformRotate();
+    skybox.draw(projMat, cameraDirection);
+    update();
+}
+
+void MyGLWidget::scaleTransformRotate() {
+    QMatrix4x4 modelMat;
+
+    QVector3D rotAxisY(0, 1, 0);
+    QVector3D rotAxisZ(0, 0, 1);
+    QVector3D rotAxisX(1, 0, 0);
+
+    int a, b, c;
+    int camMod;
+
+    if(this->isAnimated) {
+        a = (timer.elapsed() / 60) % 360;
+        b = (timer.elapsed() / 30) % 360;
+        c = (timer.elapsed() / 15) % 360;
+    } else {
+        a = this->rotationA;
+        b = this->rotationB;
+        c = this->rotationC;
+    }
+
+
+
+    if(this->cameraCenter) {
+        m_CameraPos = QVector3D(0.0f, 0.0f, 0.0f);
+        camMod = 1;
+    } else {
+        m_CameraPos = QVector3D(0.0f, 0.0f, 2.0f);
+        camMod = 0;
+    }
+
+    //outer
+    modelMat.rotate(a, rotAxisX);
+    cameraDirection.setToIdentity();
+    cameraDirection.lookAt(m_CameraPos, cameraTarget, up);
+    m_progColor->setUniformValue (5, projMat * cameraDirection * modelMat);
+    drawTexture(m_tex);
+    model.drawElements();
+
+    QMatrix4x4 cameraDirectionMVP = cameraDirection;
+
+    //middle
+    modelMat.setToIdentity();
+    modelMat.rotate(90, rotAxisZ);
+    modelMat.rotate(a, -rotAxisY);
+    modelMat.rotate(b, rotAxisX);
+    modelMat.scale(QVector3D(0.7f, 0.7f, 0.7f));
+    m_progColor->setUniformValue (5, projMat * cameraDirection * modelMat);
+    model2.drawElements();
+
+    //inner
+    modelMat.setToIdentity();
+    modelMat.rotate(a, rotAxisX);
+    modelMat.rotate(b, rotAxisY);
+    modelMat.rotate(c, rotAxisX);
+    modelMat.scale(QVector3D(0.5f, 0.5f, 0.5f));
+    cameraDirection.rotate(a * camMod, rotAxisX);
+    cameraDirection.rotate(b * camMod, rotAxisY);
+    cameraDirection.rotate(c * camMod, rotAxisX);
+    m_progColor->setUniformValue (5, projMat * cameraDirectionMVP * modelMat);
+    model3.drawElements();
+
+    //sphere
+    modelMat.setToIdentity();
+    modelMat.scale(QVector3D(0.05f, 0.05f, 0.05f));
+    modelMat.rotate(a, rotAxisX);
+    modelMat.rotate(b, rotAxisY);
+    modelMat.rotate(float(timer.elapsed() / 60) * 5.0f, rotAxisZ);
+    modelMat.translate(QVector3D(-16.0f, 0.0f, 0.0f));
+    m_progColor->setUniformValue(5, projMat * cameraDirectionMVP * modelMat);
+    drawTexture(m_tex2);
+    sphere.drawElements();
+}
+
+GLuint MyGLWidget::initTexture(GLuint m_tex, QImage texImg) {
     glGenTextures(1, &m_tex);
     glBindTexture(GL_TEXTURE_2D, m_tex);
 
@@ -86,50 +166,23 @@ void MyGLWidget::initializeGL() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-    m_progTexture = new QOpenGLShaderProgram();
-    m_progColor = new QOpenGLShaderProgram();
-    m_progTexture->addShaderFromSourceFile(QOpenGLShader::Vertex,":/sample.vert");
-    m_progTexture->addShaderFromSourceFile(QOpenGLShader::Fragment,":/sample.frag");
-    m_progColor->addShaderFromSourceFile(QOpenGLShader::Vertex,":/sample.vert");
-    m_progColor->addShaderFromSourceFile(QOpenGLShader::Fragment,":/colorShader.frag");
-    m_progTexture->link();
-    m_progColor->link();
-    Q_ASSERT(m_progTexture->isLinked());
-    Q_ASSERT(m_progColor->isLinked());
+    return m_tex;
 }
 
-void MyGLWidget::paintGL() {
-    glClear (GL_COLOR_BUFFER_BIT);
-
-    QVector3D rotAxis(0, 1, 0);
-    QMatrix4x4 rotMat;
-
-    m_progColor->bind();
-
-    rotMat.rotate(this->rotationB, rotAxis);
-
-    m_progColor->setUniformValue (0, rgbToFloat(this->rotationA));
-    m_progColor->setUniformValue (3, rotMat);
-
-    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
-
+void MyGLWidget::drawTexture(GLuint tex) {
     glActiveTexture (GL_TEXTURE0);
-    glBindTexture (GL_TEXTURE_2D, m_tex);
+    glBindTexture (GL_TEXTURE_2D, tex);
 
-    m_progTexture->bind();
-    m_progTexture->setUniformValue(1, 0);
-    m_progTexture->setUniformValue(2, (this->rotationC/10.0f));
+    m_progColor->setUniformValue(1, 0);
+}
 
-    m_progTexture->setUniformValue(3, rotMat);
-
-    void* const offset = reinterpret_cast <void* const>(sizeof(GLuint) * 3);
-    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, offset);
-
-    update();
+void MyGLWidget::updateProjectionMatrix() {
+    this->projMat.setToIdentity();
+    this->projMat.perspective(float(this->angle), (float(this->width()) / float(this->height())), float(this->near), float(this->far));
 }
 
 void MyGLWidget::resizeGL(int w, int h) {
-
+    updateProjectionMatrix();
 }
 
 float MyGLWidget::rgbToFloat(int rgb) {
@@ -154,7 +207,9 @@ void MyGLWidget::printContextInfo() {
 void MyGLWidget::onMessageLogged(QOpenGLDebugMessage message) {
     //std::cout << message.message().toStdString() << std::endl;
     //use this if qDebug output is not accessible
-    qDebug()<<message;
+    //if(message.type() != QOpenGLDebugMessage::OtherType) {
+        qDebug()<<message;
+    //}
 }
 
 void MyGLWidget::keyPressEvent(QKeyEvent *event) {
@@ -184,6 +239,8 @@ void MyGLWidget::setAngle(int value) {
     if(this->angle != value) {
         this->angle = value;
         emit this->angleValueChanged (value);
+
+        updateProjectionMatrix();
     }
 }
 
@@ -202,6 +259,8 @@ void MyGLWidget::setNear(double value) {
         } else {
             emit this->adjustNear (this->far - 2.0);
         }
+
+        updateProjectionMatrix();
     }
 }
 
@@ -212,6 +271,8 @@ void MyGLWidget::setFar(double value) {
         } else {
             emit this->adjustFar (this->near + 2.0);
         }
+
+        updateProjectionMatrix();
     }
 }
 
@@ -235,4 +296,13 @@ void MyGLWidget::setRotationC(int value) {
         this->rotationC = value;
         emit this->rotationCValueChanged (value);
     }
+}
+
+void MyGLWidget::setCameraToCenter (bool value) {
+    this->cameraCenter = !this->cameraCenter;
+}
+
+void MyGLWidget::setIsAnimated (bool value) {
+    this->isAnimated = !this->isAnimated;
+    timer.restart ();
 }

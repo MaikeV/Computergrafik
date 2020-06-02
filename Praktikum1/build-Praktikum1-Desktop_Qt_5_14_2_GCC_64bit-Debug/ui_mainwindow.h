@@ -11,6 +11,7 @@
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QCheckBox>
 #include <QtWidgets/QDoubleSpinBox>
 #include <QtWidgets/QFormLayout>
 #include <QtWidgets/QGroupBox>
@@ -44,6 +45,7 @@ public:
     QLabel *labelFOV;
     QSlider *vsAngle;
     QSpinBox *spFOV;
+    QCheckBox *chbSetCamera;
     QGroupBox *gbProjection;
     QVBoxLayout *verticalLayout_3;
     QRadioButton *rbOrthogonal;
@@ -51,12 +53,13 @@ public:
     QGroupBox *gbRotation;
     QVBoxLayout *verticalLayout_4;
     QFormLayout *Rotations;
-    QSlider *hsRotationA;
-    QSlider *hsRotationB;
-    QSlider *hsRotationC;
     QLabel *labelA;
+    QSlider *hsRotationA;
     QLabel *labelB;
+    QSlider *hsRotationB;
     QLabel *labelC;
+    QSlider *hsRotationC;
+    QCheckBox *chbAnimation;
     QGroupBox *gbClipping;
     QVBoxLayout *verticalLayout_2;
     QFormLayout *Clipping;
@@ -73,7 +76,7 @@ public:
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
         MainWindow->setEnabled(true);
-        MainWindow->resize(914, 607);
+        MainWindow->resize(914, 613);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         centralWidget->setLayoutDirection(Qt::LeftToRight);
@@ -154,6 +157,7 @@ public:
         sizePolicy2.setHeightForWidth(vsAngle->sizePolicy().hasHeightForWidth());
         vsAngle->setSizePolicy(sizePolicy2);
         vsAngle->setMaximum(360);
+        vsAngle->setValue(75);
         vsAngle->setOrientation(Qt::Vertical);
 
         Slider1->addWidget(vsAngle);
@@ -161,6 +165,7 @@ public:
         spFOV = new QSpinBox(vbControls);
         spFOV->setObjectName(QString::fromUtf8("spFOV"));
         spFOV->setMaximum(360);
+        spFOV->setValue(75);
 
         Slider1->addWidget(spFOV);
 
@@ -169,6 +174,11 @@ public:
 
 
         verticalLayout->addLayout(Sliders);
+
+        chbSetCamera = new QCheckBox(vbControls);
+        chbSetCamera->setObjectName(QString::fromUtf8("chbSetCamera"));
+
+        verticalLayout->addWidget(chbSetCamera);
 
         gbProjection = new QGroupBox(vbControls);
         gbProjection->setObjectName(QString::fromUtf8("gbProjection"));
@@ -196,13 +206,23 @@ public:
         Rotations->setObjectName(QString::fromUtf8("Rotations"));
         Rotations->setSizeConstraint(QLayout::SetDefaultConstraint);
         Rotations->setHorizontalSpacing(6);
+        labelA = new QLabel(gbRotation);
+        labelA->setObjectName(QString::fromUtf8("labelA"));
+
+        Rotations->setWidget(1, QFormLayout::LabelRole, labelA);
+
         hsRotationA = new QSlider(gbRotation);
         hsRotationA->setObjectName(QString::fromUtf8("hsRotationA"));
-        hsRotationA->setMaximum(255);
+        hsRotationA->setMaximum(180);
         hsRotationA->setSliderPosition(0);
         hsRotationA->setOrientation(Qt::Horizontal);
 
         Rotations->setWidget(1, QFormLayout::FieldRole, hsRotationA);
+
+        labelB = new QLabel(gbRotation);
+        labelB->setObjectName(QString::fromUtf8("labelB"));
+
+        Rotations->setWidget(2, QFormLayout::LabelRole, labelB);
 
         hsRotationB = new QSlider(gbRotation);
         hsRotationB->setObjectName(QString::fromUtf8("hsRotationB"));
@@ -214,28 +234,23 @@ public:
 
         Rotations->setWidget(2, QFormLayout::FieldRole, hsRotationB);
 
-        hsRotationC = new QSlider(gbRotation);
-        hsRotationC->setObjectName(QString::fromUtf8("hsRotationC"));
-        hsRotationC->setMinimum(-10);
-        hsRotationC->setMaximum(10);
-        hsRotationC->setOrientation(Qt::Horizontal);
-
-        Rotations->setWidget(3, QFormLayout::FieldRole, hsRotationC);
-
-        labelA = new QLabel(gbRotation);
-        labelA->setObjectName(QString::fromUtf8("labelA"));
-
-        Rotations->setWidget(1, QFormLayout::LabelRole, labelA);
-
-        labelB = new QLabel(gbRotation);
-        labelB->setObjectName(QString::fromUtf8("labelB"));
-
-        Rotations->setWidget(2, QFormLayout::LabelRole, labelB);
-
         labelC = new QLabel(gbRotation);
         labelC->setObjectName(QString::fromUtf8("labelC"));
 
         Rotations->setWidget(3, QFormLayout::LabelRole, labelC);
+
+        hsRotationC = new QSlider(gbRotation);
+        hsRotationC->setObjectName(QString::fromUtf8("hsRotationC"));
+        hsRotationC->setMinimum(0);
+        hsRotationC->setMaximum(180);
+        hsRotationC->setOrientation(Qt::Horizontal);
+
+        Rotations->setWidget(3, QFormLayout::FieldRole, hsRotationC);
+
+        chbAnimation = new QCheckBox(gbRotation);
+        chbAnimation->setObjectName(QString::fromUtf8("chbAnimation"));
+
+        Rotations->setWidget(0, QFormLayout::SpanningRole, chbAnimation);
 
 
         verticalLayout_4->addLayout(Rotations);
@@ -261,12 +276,14 @@ public:
 
         dsbNear = new QDoubleSpinBox(gbClipping);
         dsbNear->setObjectName(QString::fromUtf8("dsbNear"));
+        dsbNear->setValue(0.100000000000000);
 
         Clipping->setWidget(0, QFormLayout::FieldRole, dsbNear);
 
         dsbFar = new QDoubleSpinBox(gbClipping);
         dsbFar->setObjectName(QString::fromUtf8("dsbFar"));
-        dsbFar->setValue(2.000000000000000);
+        dsbFar->setMaximum(100.000000000000000);
+        dsbFar->setValue(100.000000000000000);
 
         Clipping->setWidget(1, QFormLayout::FieldRole, dsbFar);
 
@@ -322,6 +339,7 @@ public:
         vbControls->setTitle(QCoreApplication::translate("MainWindow", "Controls", nullptr));
         labelAngle->setText(QCoreApplication::translate("MainWindow", "Field Of View", nullptr));
         labelFOV->setText(QCoreApplication::translate("MainWindow", "Angle", nullptr));
+        chbSetCamera->setText(QCoreApplication::translate("MainWindow", "SetCamera", nullptr));
         gbProjection->setTitle(QCoreApplication::translate("MainWindow", "Projection Mode", nullptr));
         rbOrthogonal->setText(QCoreApplication::translate("MainWindow", "Orthogonal", nullptr));
         rbPerspective->setText(QCoreApplication::translate("MainWindow", "Perspective", nullptr));
@@ -329,6 +347,7 @@ public:
         labelA->setText(QCoreApplication::translate("MainWindow", "Ring A", nullptr));
         labelB->setText(QCoreApplication::translate("MainWindow", "Ring B", nullptr));
         labelC->setText(QCoreApplication::translate("MainWindow", "Ring C", nullptr));
+        chbAnimation->setText(QCoreApplication::translate("MainWindow", "Animation", nullptr));
         gbClipping->setTitle(QCoreApplication::translate("MainWindow", "Clipping Plane", nullptr));
         labelFar->setText(QCoreApplication::translate("MainWindow", "Far", nullptr));
         labelNear->setText(QCoreApplication::translate("MainWindow", "Near", nullptr));

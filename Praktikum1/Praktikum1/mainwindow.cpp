@@ -23,6 +23,8 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
     connect(ui->hsRotationB, &QSlider::valueChanged, ui->openGLWidget, &MyGLWidget::setRotationB);
     connect(ui->hsRotationC, &QSlider::valueChanged, ui->openGLWidget, &MyGLWidget::setRotationC);
     connect(ui->btnReset, &QPushButton::clicked, this, &MainWindow::reset);
+    connect(ui->chbAnimation, &QCheckBox::toggled, ui->openGLWidget, &MyGLWidget::setIsAnimated);
+    connect(ui->chbSetCamera, &QCheckBox::toggled, ui->openGLWidget, &MyGLWidget::setCameraToCenter);
 }
 
 MainWindow::~MainWindow() {
@@ -32,12 +34,12 @@ MainWindow::~MainWindow() {
 void MainWindow::reset() {
     ui->vsFOV->setValue (45);
     ui->spFOV->setValue (45);
-    ui->vsAngle->setValue (0);
-    ui->spAngle->setValue (0);
+    ui->vsAngle->setValue (75);
+    ui->spAngle->setValue (75);
     ui->rbPerspective->setChecked (true);
 
-    ui->dsbNear->setValue (0);
-    ui->dsbFar->setValue (2);
+    ui->dsbNear->setValue (0.1);
+    ui->dsbFar->setValue (100);
 
     ui->hsRotationA->setValue (0);
     ui->hsRotationB->setValue (0);
