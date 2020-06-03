@@ -27,17 +27,6 @@ void SkyBox::init() {
         1, 4, 2, 2, 4, 6,
     };
 
-//    m_vbo.create();
-//    m_ibo.create();
-//    m_vao.create();
-
-//    m_vao.bind();
-//    m_vbo.bind();
-//    m_ibo.bind();
-
-//    m_vbo.allocate (vertexData, sizeof (vertexData));
-//    m_ibo.allocate (indicesData, sizeof (indicesData));
-
     glGenVertexArrays(1, &m_vao);
     glBindVertexArray(m_vao);
 
@@ -58,20 +47,14 @@ void SkyBox::init() {
     m_prog->addShaderFromSourceFile(QOpenGLShader::Fragment,":/skybox.frag");
     m_prog->link();
     Q_ASSERT(m_prog->isLinked());
-
-    //m_vao.release();
 }
 
 void SkyBox::draw(QMatrix4x4 &projection, QMatrix4x4 view) {
     glDepthMask(GL_FALSE);
 
-//    QMatrix4x4 view2;
-//    view2.lookAt (QVector3D(0, 0, 0), QVector3D(0, 0, -1), QVector3D(0, 1, 0));
-
     view.column(3) = QVector4D(0.0f, 0.0f, 0.0f, 0.0f);
     view.scale(10.0f);
 
-    //m_vao.bind();
     glBindVertexArray (m_vao);
 
     glActiveTexture (GL_TEXTURE2);
@@ -84,9 +67,6 @@ void SkyBox::draw(QMatrix4x4 &projection, QMatrix4x4 view) {
     m_prog->setUniformValue(6, 0);
 
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr);
-
-    //Release VAO
-    //m_vao.release();
 
     glDepthMask(GL_TRUE);
 }

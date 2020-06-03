@@ -91,8 +91,6 @@ void MyGLWidget::scaleTransformRotate() {
         c = this->rotationC;
     }
 
-
-
     if(this->cameraCenter) {
         m_CameraPos = QVector3D(0.0f, 0.0f, 0.0f);
         camMod = 1;
@@ -101,11 +99,12 @@ void MyGLWidget::scaleTransformRotate() {
         camMod = 0;
     }
 
+    //Objecthierarchy
     //outer
     modelMat.rotate(a, rotAxisX);
     cameraDirection.setToIdentity();
     cameraDirection.lookAt(m_CameraPos, cameraTarget, up);
-    m_progColor->setUniformValue (5, projMat * cameraDirection * modelMat);
+    m_progColor->setUniformValue (5, projMat * cameraDirection * modelMat); // MVP calculation
     drawTexture(m_tex);
     model.drawElements();
 
@@ -126,7 +125,7 @@ void MyGLWidget::scaleTransformRotate() {
     modelMat.rotate(b, rotAxisY);
     modelMat.rotate(c, rotAxisX);
     modelMat.scale(QVector3D(0.5f, 0.5f, 0.5f));
-    cameraDirection.rotate(a * camMod, rotAxisX);
+    cameraDirection.rotate(a * camMod, rotAxisX); //set camera rotation equal to inner gimbal rotation
     cameraDirection.rotate(b * camMod, rotAxisY);
     cameraDirection.rotate(c * camMod, rotAxisX);
     m_progColor->setUniformValue (5, projMat * cameraDirectionMVP * modelMat);
@@ -135,11 +134,11 @@ void MyGLWidget::scaleTransformRotate() {
     //sphere
     modelMat.setToIdentity();
     modelMat.scale(QVector3D(0.05f, 0.05f, 0.05f));
-    modelMat.rotate(a, rotAxisX);
+    modelMat.rotate(a, rotAxisX); //rotation with outer gimbals
     modelMat.rotate(b, rotAxisY);
-    modelMat.rotate(float(timer.elapsed() / 60) * 5.0f, rotAxisZ);
-    modelMat.translate(QVector3D(-16.0f, 0.0f, 0.0f));
-    modelMat.rotate(float(timer.elapsed() / 60) * 5.0f, rotAxisZ);
+    modelMat.rotate(float(timer.elapsed() / 60) * 5.0f, rotAxisZ); // rotation around middle gimbal
+    modelMat.translate(QVector3D(-16.0f, 0.0f, 0.0f)); // set position to middle gimbal
+    modelMat.rotate(float(timer.elapsed() / 60) * 5.0f, rotAxisZ); // "roll"
     m_progColor->setUniformValue(5, projMat * cameraDirectionMVP * modelMat);
     drawTexture(m_tex2);
     sphere.drawElements();
