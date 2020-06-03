@@ -56,6 +56,12 @@ void MyGLWidget::initializeGL() {
     m_progColor->addShaderFromSourceFile(QOpenGLShader::Fragment,":/colorShader.frag");
     m_progColor->link();
     Q_ASSERT(m_progColor->isLinked());
+
+    m_progLighting = new QOpenGLShaderProgram();
+    m_progLighting->addShaderFromSourceFile (QOpenGLShader::Vertex, ":/lightShader.vert");
+    m_progLighting->addShaderFromSourceFile (QOpenGLShader::Fragment, ":/lightShader.frag");
+    m_progLighting->link();
+    Q_ASSERT(m_progLighting->isLinked());
 }
 
 void MyGLWidget::paintGL() {
@@ -68,12 +74,32 @@ void MyGLWidget::paintGL() {
 
     scaleTransformRotate();
     skybox.draw(projMat, cameraDirection);
+
+    setLighting();
+
     update();
 }
 
-void MyGLWidget::scaleTransformRotate() {
-    QMatrix4x4 modelMat;
+void MyGLWidget::setLighting() {
+    m_progLighting->bind();
 
+    this->ambient = this->rotationA / 180;
+    this->diffuse = this->rotationB / 180;
+    this->specular = this->rotationC / 180;
+    this->shininess = this->angle / 360 * 100;
+
+    m_progLighting->setUniformValue (9, lightPos);
+    m_progLighting->setUniformValue (8, m_CameraPos);
+    m_progLighting->setUniformValue (10, ambient);
+    m_progLighting->setUniformValue (11, diffuse);
+    m_progLighting->setUniformValue (12, specular);
+    m_progLighting->setUniformValue (13, shininess);
+
+
+    //seti in values of vert shader normal vec
+}
+
+void MyGLWidget::scaleTransformRotate() {
     QVector3D rotAxisY(0, 1, 0);
     QVector3D rotAxisZ(0, 0, 1);
     QVector3D rotAxisX(1, 0, 0);
@@ -90,8 +116,6 @@ void MyGLWidget::scaleTransformRotate() {
         b = this->rotationB;
         c = this->rotationC;
     }
-
-
 
     if(this->cameraCenter) {
         m_CameraPos = QVector3D(0.0f, 0.0f, 0.0f);

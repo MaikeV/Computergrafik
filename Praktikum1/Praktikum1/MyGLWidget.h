@@ -24,15 +24,23 @@ private:
     int rotationA = 0;
     int rotationB = 0;
     int rotationC = 0;
+
+    int shininess;
+    float ambient;
+    float diffuse;
+    float specular;
+
     GLuint m_tex;
     GLuint m_tex2;
     GLuint m_cubeTex;
-    QVector3D m_CameraPos;
+    QVector3D m_CameraPos = QVector3D(0.0f, 0.0f, 2.0f);
     QVector3D cameraTarget = QVector3D(0.0f, 0.0f, 0.0f);
     QVector3D up = QVector3D(0.0f, 1.0f, 0.0f);
     QMatrix4x4 cameraDirection;
+    QVector3D lightPos = QVector3D(0.0f, 0.0f, 0.0f);
     QOpenGLShaderProgram *m_progTexture;
     QOpenGLShaderProgram *m_progColor;
+    QOpenGLShaderProgram *m_progLighting;
     QOpenGLDebugLogger *debugLogger;
     Model model;
     Model model2;
@@ -41,13 +49,8 @@ private:
     SkyBox skybox;
     QMatrix4x4 projMat;
     QMatrix4x4 mvpMat;
+    QMatrix4x4 modelMat;
     QElapsedTimer timer;
-
-//    struct Vertex {
-//        GLfloat position[2];
-//        GLfloat color[3];
-//        GLfloat textureCoordinates[2];
-//    };
 
     struct Vertex {
         GLfloat position[3];
@@ -55,6 +58,7 @@ private:
         GLfloat texCoord[2];
     };
 
+    void setLighting();
     void scaleTransformRotate();
     float rgbToFloat(int rgb);
     void printContextInfo();
@@ -69,13 +73,12 @@ public:
 
     ~MyGLWidget() {
         makeCurrent ();
-        //delete m_progTexture;
-//        glDeleteBuffers (1, &m_vbo);
-//        glDeleteVertexArrays(1, &m_vao);
         glDeleteTextures(1, &m_tex);
-//        glDeleteBuffers(1, &m_ibo);
         delete m_progColor;
         model.finiGL();
+        model2.finiGL();
+        model3.finiGL();
+        sphere.finiGL();
     }
 
     int getFOV() const {

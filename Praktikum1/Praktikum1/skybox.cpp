@@ -27,17 +27,6 @@ void SkyBox::init() {
         1, 4, 2, 2, 4, 6,
     };
 
-//    m_vbo.create();
-//    m_ibo.create();
-//    m_vao.create();
-
-//    m_vao.bind();
-//    m_vbo.bind();
-//    m_ibo.bind();
-
-//    m_vbo.allocate (vertexData, sizeof (vertexData));
-//    m_ibo.allocate (indicesData, sizeof (indicesData));
-
     glGenVertexArrays(1, &m_vao);
     glBindVertexArray(m_vao);
 

@@ -40,6 +40,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 DISTFILES += \
     colorShader.frag \
     gimbal.obj \
+    lightShader.frag \
+    lightShader.vert \
     sample.frag \
     sample.vert \
     skybox.frag \
