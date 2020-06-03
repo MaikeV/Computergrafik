@@ -32,6 +32,7 @@ void MyGLWidget::initializeGL() {
     model2.initGL(":/gimbal_suspension.obj");
     model3.initGL(":/gimbal.obj");
     sphere.initGL(":/sphere.obj");
+    sun.initGL (":/sphere.obj");
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
@@ -59,7 +60,7 @@ void MyGLWidget::initializeGL() {
 
     m_progLighting = new QOpenGLShaderProgram();
     m_progLighting->addShaderFromSourceFile (QOpenGLShader::Vertex, ":/lightShader.vert");
-    m_progLighting->addShaderFromSourceFile (QOpenGLShader::Fragment, ":/lightShader.frag");
+    m_progLighting->addShaderFromSourceFile (QOpenGLShader::Fragment, ":/colorShader.frag");
     m_progLighting->link();
     Q_ASSERT(m_progLighting->isLinked());
 }
@@ -70,33 +71,26 @@ void MyGLWidget::paintGL() {
     //depth test
     glEnable(GL_DEPTH_TEST);
 
-    m_progColor->bind();
-
     scaleTransformRotate();
-    skybox.draw(projMat, cameraDirection);
 
-    setLighting();
+    skybox.draw(projMat, cameraDirection);
 
     update();
 }
 
 void MyGLWidget::setLighting() {
-    m_progLighting->bind();
 
-    this->ambient = this->rotationA / 180;
-    this->diffuse = this->rotationB / 180;
-    this->specular = this->rotationC / 180;
-    this->shininess = this->angle / 360 * 100;
+    this->ambient = float(this->rotationA) / 180.f;
+    this->diffuse = float(this->rotationB) / 180.f;
+    this->specular = float(this->rotationC) / 180.f;
+    this->shininess = float(this->angle) / 360.f * 100.f;
 
-    m_progLighting->setUniformValue (9, lightPos);
-    m_progLighting->setUniformValue (8, m_CameraPos);
-    m_progLighting->setUniformValue (10, ambient);
-    m_progLighting->setUniformValue (11, diffuse);
-    m_progLighting->setUniformValue (12, specular);
-    m_progLighting->setUniformValue (13, shininess);
-
-
-    //seti in values of vert shader normal vec
+    m_progColor->setUniformValue(8, m_CameraPos);
+    m_progColor->setUniformValue(9, lightPos);
+    m_progColor->setUniformValue(10, ambient);
+    m_progColor->setUniformValue(11, diffuse);
+    m_progColor->setUniformValue(12, specular);
+    //m_progColor->setUniformValue(13, shininess);
 }
 
 void MyGLWidget::scaleTransformRotate() {
@@ -125,11 +119,30 @@ void MyGLWidget::scaleTransformRotate() {
         camMod = 0;
     }
 
-    //outer
-    modelMat.rotate(a, rotAxisX);
+    m_progLighting->bind();
+
+    //sun
     cameraDirection.setToIdentity();
     cameraDirection.lookAt(m_CameraPos, cameraTarget, up);
-    m_progColor->setUniformValue (5, projMat * cameraDirection * modelMat);
+    modelMat.setToIdentity ();
+    modelMat.scale(QVector3D(0.1f, 0.1f, 0.1f));
+    modelMat.rotate(timer.elapsed() / 60 % 360, rotAxisY);
+    modelMat.translate(12.0f, 0.0f, 0.0f);
+    m_progLighting->setUniformValue(14, projMat * cameraDirection * modelMat);
+    m_progLighting->setUniformValue(15, QVector3D(1.f, 1.f, 1.f));
+    lightPos = modelMat.column(0).toVector3D();
+    qDebug() << modelMat;
+    sun.drawElements();
+
+    m_progColor->bind();
+
+    setLighting();
+
+    //outer
+    modelMat.setToIdentity();
+    modelMat.rotate(a, rotAxisX);
+    m_progColor->setUniformValue(0, projMat * cameraDirection * modelMat);
+    m_progColor->setUniformValue(2, modelMat);
     drawTexture(m_tex);
     model.drawElements();
 
@@ -141,7 +154,8 @@ void MyGLWidget::scaleTransformRotate() {
     modelMat.rotate(a, -rotAxisY);
     modelMat.rotate(b, rotAxisX);
     modelMat.scale(QVector3D(0.7f, 0.7f, 0.7f));
-    m_progColor->setUniformValue (5, projMat * cameraDirection * modelMat);
+    m_progColor->setUniformValue (0, projMat * cameraDirection * modelMat);
+    m_progColor->setUniformValue(2, modelMat);
     model2.drawElements();
 
     //inner
@@ -153,7 +167,8 @@ void MyGLWidget::scaleTransformRotate() {
     cameraDirection.rotate(a * camMod, rotAxisX);
     cameraDirection.rotate(b * camMod, rotAxisY);
     cameraDirection.rotate(c * camMod, rotAxisX);
-    m_progColor->setUniformValue (5, projMat * cameraDirectionMVP * modelMat);
+    m_progColor->setUniformValue (0, projMat * cameraDirectionMVP * modelMat);
+    m_progColor->setUniformValue(2, modelMat);
     model3.drawElements();
 
     //sphere
@@ -163,9 +178,11 @@ void MyGLWidget::scaleTransformRotate() {
     modelMat.rotate(b, rotAxisY);
     modelMat.rotate(float(timer.elapsed() / 60) * 5.0f, rotAxisZ);
     modelMat.translate(QVector3D(-16.0f, 0.0f, 0.0f));
-    m_progColor->setUniformValue(5, projMat * cameraDirectionMVP * modelMat);
+    m_progColor->setUniformValue(0, projMat * cameraDirectionMVP * modelMat);
+    m_progColor->setUniformValue(2, modelMat);
     drawTexture(m_tex2);
     sphere.drawElements();
+
 }
 
 GLuint MyGLWidget::initTexture(GLuint m_tex, QImage texImg) {
@@ -202,7 +219,7 @@ void MyGLWidget::drawTexture(GLuint tex) {
 
 void MyGLWidget::updateProjectionMatrix() {
     this->projMat.setToIdentity();
-    this->projMat.perspective(float(this->angle), (float(this->width()) / float(this->height())), float(this->near), float(this->far));
+    this->projMat.perspective(float(this->fov), (float(this->width()) / float(this->height())), float(this->near), float(this->far));
 }
 
 void MyGLWidget::resizeGL(int w, int h) {
@@ -256,6 +273,8 @@ void MyGLWidget::setFOV(int value) {
     if(this->fov != value) {
         this->fov = value;
         emit this->fovValueChanged(value);
+
+        updateProjectionMatrix();
     }
 }
 
@@ -264,7 +283,7 @@ void MyGLWidget::setAngle(int value) {
         this->angle = value;
         emit this->angleValueChanged (value);
 
-        updateProjectionMatrix();
+        //updateProjectionMatrix();
     }
 }
 

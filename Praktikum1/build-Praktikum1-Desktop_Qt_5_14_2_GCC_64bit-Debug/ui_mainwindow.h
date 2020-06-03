@@ -120,7 +120,7 @@ public:
         sizePolicy2.setVerticalStretch(0);
         sizePolicy2.setHeightForWidth(vsFOV->sizePolicy().hasHeightForWidth());
         vsFOV->setSizePolicy(sizePolicy2);
-        vsFOV->setMinimum(0);
+        vsFOV->setMinimum(1);
         vsFOV->setMaximum(180);
         vsFOV->setValue(75);
         vsFOV->setOrientation(Qt::Vertical);
@@ -129,7 +129,7 @@ public:
 
         spAngle = new QSpinBox(vbControls);
         spAngle->setObjectName(QString::fromUtf8("spAngle"));
-        spAngle->setMinimum(0);
+        spAngle->setMinimum(1);
         spAngle->setMaximum(180);
         spAngle->setValue(75);
 

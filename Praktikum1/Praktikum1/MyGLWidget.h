@@ -14,7 +14,7 @@
 class MyGLWidget : public QOpenGLWidget, private QOpenGLFunctions_3_3_Core {
     Q_OBJECT
 private:
-    int fov = 45;
+    int fov = 75;
     int angle = 75;
     bool projectionModeIsPerspective = true;
     bool isAnimated = false;
@@ -38,7 +38,7 @@ private:
     QVector3D up = QVector3D(0.0f, 1.0f, 0.0f);
     QMatrix4x4 cameraDirection;
     QVector3D lightPos = QVector3D(0.0f, 0.0f, 0.0f);
-    QOpenGLShaderProgram *m_progTexture;
+    //QOpenGLShaderProgram *m_progTexture;
     QOpenGLShaderProgram *m_progColor;
     QOpenGLShaderProgram *m_progLighting;
     QOpenGLDebugLogger *debugLogger;
@@ -46,6 +46,7 @@ private:
     Model model2;
     Model model3;
     Model sphere;
+    Model sun;
     SkyBox skybox;
     QMatrix4x4 projMat;
     QMatrix4x4 mvpMat;
