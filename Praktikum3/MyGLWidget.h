@@ -14,7 +14,7 @@
 class MyGLWidget : public QOpenGLWidget, private QOpenGLFunctions_3_3_Core {
     Q_OBJECT
 private:
-    int fov = 45;
+    int fov = 75;
     int angle = 75;
     bool projectionModeIsPerspective = true;
     bool isAnimated = false;

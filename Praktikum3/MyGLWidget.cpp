@@ -139,6 +139,7 @@ void MyGLWidget::scaleTransformRotate() {
     modelMat.rotate(b, rotAxisY);
     modelMat.rotate(float(timer.elapsed() / 60) * 5.0f, rotAxisZ);
     modelMat.translate(QVector3D(-16.0f, 0.0f, 0.0f));
+    modelMat.rotate(float(timer.elapsed() / 60) * 5.0f, rotAxisZ);
     m_progColor->setUniformValue(5, projMat * cameraDirectionMVP * modelMat);
     drawTexture(m_tex2);
     sphere.drawElements();

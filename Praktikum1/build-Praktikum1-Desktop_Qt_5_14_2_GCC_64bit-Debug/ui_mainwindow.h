@@ -120,16 +120,18 @@ public:
         sizePolicy2.setVerticalStretch(0);
         sizePolicy2.setHeightForWidth(vsFOV->sizePolicy().hasHeightForWidth());
         vsFOV->setSizePolicy(sizePolicy2);
-        vsFOV->setMinimum(45);
+        vsFOV->setMinimum(0);
         vsFOV->setMaximum(180);
+        vsFOV->setValue(75);
         vsFOV->setOrientation(Qt::Vertical);
 
         Slider2->addWidget(vsFOV);
 
         spAngle = new QSpinBox(vbControls);
         spAngle->setObjectName(QString::fromUtf8("spAngle"));
-        spAngle->setMinimum(45);
+        spAngle->setMinimum(0);
         spAngle->setMaximum(180);
+        spAngle->setValue(75);
 
         Slider2->addWidget(spAngle);
 
