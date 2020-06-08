@@ -682,18 +682,25 @@ compiler_rcc_clean:
 	-$(DEL_FILE) qrc_res.cpp
 qrc_res.cpp: ../Praktikum1/res.qrc \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/bin/rcc \
-		../Praktikum1/gimbal.obj \
 		../Praktikum1/gimbal_suspension.obj \
-		../Praktikum1/sample.vert \
-		../Praktikum1/skybox.vert \
-		../Praktikum1/lightShader.frag \
-		../Praktikum1/sample.frag \
-		../Praktikum1/colorShader.frag \
-		../Praktikum1/texture.jpg \
+		../Praktikum1/gimbalNew.obj \
+		../Praktikum1/ruby.jpg \
+		../Praktikum1/gimbal.obj \
 		../Praktikum1/TextureLava.jpg \
-		../Praktikum1/skybox.frag \
-		../Praktikum1/sphere.obj \
+		../Praktikum1/texture.jpg \
 		../Praktikum1/lightShader.vert \
+		../Praktikum1/skybox.vert \
+		../Praktikum1/sample.vert \
+		../Praktikum1/silver.jpg \
+		../Praktikum1/gimbal_suspensionNew.obj \
+		../Praktikum1/lightShader.frag \
+		../Praktikum1/sphere.obj \
+		../Praktikum1/obsidian.jpg \
+		../Praktikum1/bronze.jpg \
+		../Praktikum1/goldentexture3.jpg \
+		../Praktikum1/colorShader.frag \
+		../Praktikum1/skybox.frag \
+		../Praktikum1/sample.frag \
 		../Praktikum1/skybox/front.jpg \
 		../Praktikum1/skybox/back.jpg \
 		../Praktikum1/skybox/bottom.jpg \
@@ -1497,8 +1504,46 @@ mainwindow.o: ../Praktikum1/mainwindow.cpp ../Praktikum1/mainwindow.h \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qtabwidget.h \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qicon.h \
 		ui_mainwindow.h \
-		../Praktikum1/MyGLWidget.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/QVariant \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QApplication \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qapplication.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qcoreapplication.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qeventloop.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qdesktopwidget.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qguiapplication.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qinputmethod.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QCheckBox \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qcheckbox.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qabstractbutton.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QDoubleSpinBox \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qspinbox.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qvalidator.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/qregularexpression.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QFormLayout \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qformlayout.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QLayout \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qlayout.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qlayoutitem.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qboxlayout.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qgridlayout.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QGroupBox \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qgroupbox.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qframe.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QHBoxLayout \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QLabel \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qlabel.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QPushButton \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qpushbutton.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QRadioButton \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qradiobutton.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QSlider \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qslider.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qabstractslider.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QSpinBox \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QVBoxLayout \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QWidget \
+		../Praktikum1/MyGLWidget.h \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/QOpenGLWidget \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtWidgets/qopenglwidget.h \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/QSurfaceFormat \

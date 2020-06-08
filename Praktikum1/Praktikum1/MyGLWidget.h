@@ -1,5 +1,6 @@
 #ifndef MYGLWIDGET_H
 #define MYGLWIDGET_H
+#define NUM_LS 5
 
 #include <QWidget>
 #include <QOpenGLWidget>
@@ -30,28 +31,74 @@ private:
     float diffuse;
     float specular;
 
-    GLuint m_tex;
-    GLuint m_tex2;
+    int a, b, c;
+    int camMod;
+
+    GLuint m_texIce;
+    GLuint m_texLava;
+    GLuint m_texGold;
+    GLuint m_texObsidian;
+    GLuint m_texBronze;
+    GLuint m_texRuby;
+    GLuint m_texSilver;
     GLuint m_cubeTex;
+
+    QImage texImg;
+    QImage texLava;
+    QImage texGold;
+    QImage texSilver;
+    QImage texObsidian;
+    QImage texRuby;
+    QImage texBronze;
+
     QVector3D m_CameraPos = QVector3D(0.0f, 0.0f, 2.0f);
     QVector3D cameraTarget = QVector3D(0.0f, 0.0f, 0.0f);
-    QVector3D up = QVector3D(0.0f, 1.0f, 0.0f);
-    QMatrix4x4 cameraDirection;
+    QVector3D up = QVector3D(0.0f, 1.0f, 0.0f); 
     QVector3D lightPos = QVector3D(0.0f, 0.0f, 0.0f);
-    //QOpenGLShaderProgram *m_progTexture;
+    QVector3D rotAxisX = QVector3D(1, 0, 0);
+    QVector3D rotAxisY  = QVector3D(0, 1, 0);
+    QVector3D rotAxisZ = QVector3D(0, 0, 1);
+
     QOpenGLShaderProgram *m_progColor;
     QOpenGLShaderProgram *m_progLighting;
+
     QOpenGLDebugLogger *debugLogger;
+
     Model model;
     Model model2;
     Model model3;
     Model sphere;
     Model sun;
+    Model sunRed;
+    Model sunGreen;
+    Model sunBlue;
+    Model sunViolett;
+    Model sunYellow;
+
     SkyBox skybox;
+
     QMatrix4x4 projMat;
     QMatrix4x4 mvpMat;
     QMatrix4x4 modelMat;
+    QMatrix4x4 cameraDirection;
+
     QElapsedTimer timer;
+
+    struct LightSource {
+        alignas(16) QVector3D position;
+        alignas(16) QVector3D color;
+
+        float ka;
+        float kd;
+        float ks;
+        float constant;
+        float linear;
+        float quadratic;
+    };
+
+    LightSource ls[NUM_LS];
+
+    unsigned int uboLights;
 
     struct Vertex {
         GLfloat position[3];
@@ -59,11 +106,28 @@ private:
         GLfloat texCoord[2];
     };
 
-    void setLighting();
+    struct Material {
+        QVector3D ambient;
+        QVector3D diffuse;
+        QVector3D specular;
+        float shininess;
+    };
+
+    Material gold;
+    Material bronze;
+    Material obsidian;
+    Material ruby;
+    Material silver;
+
+    void setLights();
+    void loadModels();
+    void loadTextures();
+    void rstLights();
+    void initMaterials();
     void scaleTransformRotate();
     float rgbToFloat(int rgb);
     void printContextInfo();
-    GLuint initTexture(GLuint m_tex, QImage texImage);
+    GLuint initTexture(GLuint m_texIce, QImage texImage);
     void drawTexture(GLuint tex);
     void updateProjectionMatrix();
 
@@ -74,7 +138,7 @@ public:
 
     ~MyGLWidget() {
         makeCurrent ();
-        glDeleteTextures(1, &m_tex);
+        glDeleteTextures(1, &m_texIce);
         delete m_progColor;
         model.finiGL();
         model2.finiGL();

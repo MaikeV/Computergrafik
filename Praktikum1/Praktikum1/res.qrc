@@ -18,5 +18,12 @@
         <file>skybox.vert</file>
         <file>lightShader.frag</file>
         <file>lightShader.vert</file>
+        <file>goldentexture3.jpg</file>
+        <file>obsidian.jpg</file>
+        <file>ruby.jpg</file>
+        <file>bronze.jpg</file>
+        <file>silver.jpg</file>
+        <file>gimbalNew.obj</file>
+        <file>gimbal_suspensionNew.obj</file>
     </qresource>
 </RCC>

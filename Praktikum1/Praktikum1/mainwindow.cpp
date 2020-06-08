@@ -44,4 +44,5 @@ void MainWindow::reset() {
     ui->hsRotationA->setValue (0);
     ui->hsRotationB->setValue (0);
     ui->hsRotationC->setValue (0);
+
 }

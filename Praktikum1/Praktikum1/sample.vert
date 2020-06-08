@@ -22,7 +22,8 @@ void main() {
 
     // Calculate and normalize fragment position
     // WorldSpace -> ModelMatrix
-    vFragPos = normalize(uModelMatrix * vertHom).xyz;
+    vFragPos = normalize(vec3(uModelMatrix * vertHom));
+    //vFragPos = vec3(0,0,0);
     //normalize(vFragPos);
 
     gl_Position = uModelViewProjectionMatrix * vertHom;

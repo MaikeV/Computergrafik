@@ -11,7 +11,7 @@
 #include <QOpenGLVertexArrayObject>
 
 class SkyBox : QOpenGLFunctions_3_3_Core{
-public:
+private:
     QImage right;
     QImage left;
     QImage top;
@@ -22,23 +22,27 @@ public:
     QOpenGLShaderProgram *m_prog;
 
     GLuint m_cubeTex;
-//    QOpenGLBuffer m_vbo;
-//    QOpenGLBuffer m_ibo;
-//    QOpenGLVertexArrayObject m_vao;
 
     GLuint m_vbo;
     GLuint m_ibo;
     GLuint m_vao;
-    SkyBox();
 
-    ~SkyBox() {
-        glDeleteTextures (1, & m_cubeTex );
+
+public:
+    GLuint getCubeTex() const {
+        return this->m_cubeTex;
     }
 
     void init();
     void render();
     void draw(QMatrix4x4 &projection, QMatrix4x4 view);
     void loadCubemap();
+
+    SkyBox();
+
+    ~SkyBox() {
+        glDeleteTextures (1, & m_cubeTex );
+    }
 };
 
 #endif // SKYBOX_H
