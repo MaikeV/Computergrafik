@@ -1,0 +1,29 @@
+<RCC>
+    <qresource prefix="/">
+        <file>sample.frag</file>
+        <file>sample.vert</file>
+        <file>texture.jpg</file>
+        <file>colorShader.frag</file>
+        <file>gimbal.obj</file>
+        <file>sphere.obj</file>
+        <file>gimbal_suspension.obj</file>
+        <file>TextureLava.jpg</file>
+        <file>skybox/back.jpg</file>
+        <file>skybox/bottom.jpg</file>
+        <file>skybox/front.jpg</file>
+        <file>skybox/left.jpg</file>
+        <file>skybox/right.jpg</file>
+        <file>skybox/top.jpg</file>
+        <file>skybox.frag</file>
+        <file>skybox.vert</file>
+        <file>lightShader.frag</file>
+        <file>lightShader.vert</file>
+        <file>goldentexture3.jpg</file>
+        <file>obsidian.jpg</file>
+        <file>ruby.jpg</file>
+        <file>bronze.jpg</file>
+        <file>silver.jpg</file>
+        <file>gimbalNew.obj</file>
+        <file>gimbal_suspensionNew.obj</file>
+    </qresource>
+</RCC>
