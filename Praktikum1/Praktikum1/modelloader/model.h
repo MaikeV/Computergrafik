@@ -4,11 +4,11 @@
 #include <QOpenGLBuffer>
 #include <QOpenGLVertexArrayObject>
 #include <QString>
-#include <QOpenGLFunctions_3_3_Core>
+#include <QOpenGLFunctions_4_3_Core>
 
 //#include "common.h"
 
-class Model : QOpenGLFunctions_3_3_Core {
+class Model : QOpenGLFunctions_4_3_Core {
 public:
     Model();
 

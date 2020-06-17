@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>914</width>
-    <height>613</height>
+    <height>649</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -187,6 +187,16 @@
           </widget>
          </item>
          <item>
+          <widget class="QCheckBox" name="chbMaterial">
+           <property name="text">
+            <string>Material</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QGroupBox" name="gbProjection">
            <property name="title">
             <string>Projection Mode</string>
@@ -226,14 +236,21 @@
               <property name="horizontalSpacing">
                <number>6</number>
               </property>
-              <item row="1" column="0">
+              <item row="0" column="0" colspan="2">
+               <widget class="QCheckBox" name="chbAnimation">
+                <property name="text">
+                 <string>Animation</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
                <widget class="QLabel" name="labelA">
                 <property name="text">
                  <string>Ring A</string>
                 </property>
                </widget>
               </item>
-              <item row="1" column="1">
+              <item row="2" column="1">
                <widget class="QSlider" name="hsRotationA">
                 <property name="maximum">
                  <number>180</number>
@@ -246,14 +263,14 @@
                 </property>
                </widget>
               </item>
-              <item row="2" column="0">
+              <item row="3" column="0">
                <widget class="QLabel" name="labelB">
                 <property name="text">
                  <string>Ring B</string>
                 </property>
                </widget>
               </item>
-              <item row="2" column="1">
+              <item row="3" column="1">
                <widget class="QSlider" name="hsRotationB">
                 <property name="minimum">
                  <number>0</number>
@@ -272,14 +289,14 @@
                 </property>
                </widget>
               </item>
-              <item row="3" column="0">
+              <item row="4" column="0">
                <widget class="QLabel" name="labelC">
                 <property name="text">
                  <string>Ring C</string>
                 </property>
                </widget>
               </item>
-              <item row="3" column="1">
+              <item row="4" column="1">
                <widget class="QSlider" name="hsRotationC">
                 <property name="minimum">
                  <number>0</number>
@@ -289,13 +306,6 @@
                 </property>
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="0" colspan="2">
-               <widget class="QCheckBox" name="chbAnimation">
-                <property name="text">
-                 <string>Animation</string>
                 </property>
                </widget>
               </item>

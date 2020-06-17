@@ -17,16 +17,52 @@ void MyGLWidget::initializeGL() {
         debugLogger->enableMessages();
     }
 
-    glClearColor (0.2f, 0.2f, 0.2f, 0.1f);
+    glClearColor(0.2f, 0.2f, 0.2f, 0.1f);
+
+    Vertex vert[] = {
+            {{-1.f, 1.f},        {0.0f, 1.0f}},  //topLeft
+            {{1.f, 1.f},         {1.0f, 1.0f}},  //topRight
+            {{-1.f, -1.f},       {0.0f, 0.0f}},  //bottomLeft
+            {{1.f, -1.f},        {1.0f, 0.0f}},  //bottomRight
+    };
+
+    GLuint data[] = {1, 0, 2, 1, 2, 3};
+
+    glEnable (GL_DEPTH_TEST);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+
+    glGenBuffers(1, &m_vbo);
+    glGenBuffers(1, &m_ibo);
+    glGenVertexArrays(1, &m_vao);
+
+    glBindVertexArray(m_vao);
+    glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
+
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vert), vert, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
+
+    #define OFS(s,a) reinterpret_cast<void* const>(offsetof(s,a))
+
+    glEnableVertexAttribArray (0);
+    glVertexAttribPointer (0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), OFS(Vertex, position));
+
+    glEnableVertexAttribArray (1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), OFS(Vertex, texPos));
+
+    #undef OFS
+
+    glBindVertexArray(0);
+
+    //glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
 
     //textures and texture objects
     loadTextures();
 
     //modelloading
     loadModels();
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
     initMaterials();
 
@@ -57,11 +93,22 @@ void MyGLWidget::initializeGL() {
     m_progColor->link();
     Q_ASSERT(m_progColor->isLinked());
 
+    m_depthShader = new QOpenGLShaderProgram();
+    m_depthShader->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/depthShader.vert");
+    m_depthShader->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/depthShader.frag");
+    m_depthShader->link();
+    Q_ASSERT(m_depthShader->isLinked());
+
     m_progLighting = new QOpenGLShaderProgram();
     m_progLighting->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/lightShader.vert");
     m_progLighting->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/lightShader.frag");
     m_progLighting->link();
     Q_ASSERT(m_progLighting->isLinked());
+
+    m_compShader = new QOpenGLShaderProgram();
+    m_compShader->addShaderFromSourceFile(QOpenGLShader::Compute, ":/computeShader.comp");
+    m_compShader->link();
+    Q_ASSERT(m_compShader->isLinked());
 }
 
 void MyGLWidget::loadModels() {
@@ -78,28 +125,36 @@ void MyGLWidget::loadModels() {
 }
 
 void MyGLWidget::loadTextures() {
-    texImg.load(":/texture.jpg");
-    texLava.load(":/TextureLava.jpg");
-    texGold.load(":/goldentexture3.jpg");
-    texSilver.load(":/silver.jpg");
-    texObsidian.load(":/obsidian.jpg");
-    texRuby.load(":/ruby.jpg");
-    texBronze.load(":/bronze.jpg");
-    Q_ASSERT(!texImg.isNull());
-    Q_ASSERT(!texLava.isNull());
-    Q_ASSERT(!texGold.isNull());
-    Q_ASSERT(!texObsidian.isNull());
-    Q_ASSERT(!texRuby.isNull());
-    Q_ASSERT(!texBronze.isNull());
-    Q_ASSERT(!texSilver.isNull());
+//    texImg.load(":/texture.jpg");
+//    m_texIce = initTexture(m_texIce, texImg);
+    //fbo texture
+    //Generate Frame Buffer Object
+    glGenFramebuffers(1, &m_fbo);
+    glBindFramebuffer (GL_FRAMEBUFFER, m_fbo);
+    glEnable(GL_DEPTH_TEST);
 
-    m_texIce = initTexture(m_texIce, texImg);
-    m_texLava = initTexture(m_texLava, texLava);
-    m_texGold = initTexture(m_texGold, texGold);
-    m_texObsidian = initTexture(m_texObsidian, texObsidian);
-    m_texBronze = initTexture(m_texBronze, texBronze);
-    m_texRuby = initTexture(m_texRuby, texRuby);
-    m_texSilver = initTexture(m_texSilver, texSilver);
+    glGenTextures(1, &colorTex);
+    glBindTexture(GL_TEXTURE_2D, colorTex);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, size().width(), size().height());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    //glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT16, this->width(), this->height());
+    //glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTex, 0);
+
+    glGenTextures(1, &depthTex);
+    glBindTexture(GL_TEXTURE_2D, depthTex);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT16, size().width(), size().height());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    //glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTex, 0);
+
+    Q_ASSERT(glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
 }
 
 GLuint MyGLWidget::initTexture(GLuint m_tex, QImage texImg) {
@@ -222,6 +277,9 @@ void MyGLWidget::initMaterials() {
 }
 
 void MyGLWidget::paintGL() {
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTex, 0);
+
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     if(this->isAnimated) {
@@ -239,17 +297,55 @@ void MyGLWidget::paintGL() {
     cameraDirection.setToIdentity();
     cameraDirection.lookAt(m_CameraPos, cameraTarget, up);
 
+    glEnable(GL_DEPTH_TEST);
+    skybox.draw(projMat, cameraDirection);
+
     rstLights();
 
     glBindBufferBase(GL_UNIFORM_BUFFER, 0, uboLights);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(ls), ls);
 
-    glEnable(GL_DEPTH_TEST);
+
     scaleTransformRotate();
 
-    skybox.draw(projMat, cameraDirection);
+    //Depth Stuff
+    glBindFramebuffer(GL_FRAMEBUFFER, defaultFramebufferObject());
+    glDisable(GL_DEPTH_TEST);
+    glBindVertexArray(m_vao);
+
+    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glActiveTexture (GL_TEXTURE0);
+    glBindTexture (GL_TEXTURE_2D, depthTex);
+
+    m_compShader->bind();
+
+    GLuint unit = 0;
+    glBindImageTexture(unit, colorTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
+
+    blur(this->gaussIntensity);
+
+    glDispatchCompute(this->width(), this->height(), 1.f);
+
+    m_depthShader->bind();
+
+    if (this->depthChecked) {
+        m_depthShader->setUniformValue(90, 0);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+    } else {
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fbo);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, defaultFramebufferObject());
+
+        glBlitFramebuffer(0, 0, this->width(), this->height(), 0, 0, this->width(), this->height(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    }
 
     update();
+}
+
+void MyGLWidget::blur(int intensity) {
+    std::vector<double> filter = generate1DGauss(intensity);
+
+
 }
 
 void MyGLWidget::rstLights() {
@@ -326,11 +422,11 @@ void MyGLWidget::scaleTransformRotate() {
     modelMat.rotate(a, rotAxisX);
     m_progColor->setUniformValue(0, projMat * cameraDirection * modelMat);
     m_progColor->setUniformValue(2, modelMat);
-    m_progColor->setUniformValue(16, gold.ambient);
-    m_progColor->setUniformValue(17, gold.diffuse);
-    m_progColor->setUniformValue(18, gold.specular);
+    m_progColor->setUniformValue(16, this->materialChecked ? this->rotationA / 180.f * QVector3D(1, 1, 1) : gold.ambient);
+    m_progColor->setUniformValue(17, this->materialChecked ? this->rotationB / 180.f * QVector3D(1, 1, 1) : gold.diffuse);
+    m_progColor->setUniformValue(18, this->materialChecked ? this->rotationC / 180.f * QVector3D(1, 1, 1) : gold.specular);
     m_progColor->setUniformValue(19, gold.shininess);
-    drawTexture(m_texGold);
+    drawTexture();
     model.drawElements();
 
     QMatrix4x4 cameraDirectionMVP = cameraDirection;
@@ -341,13 +437,13 @@ void MyGLWidget::scaleTransformRotate() {
     modelMat.rotate(a, -rotAxisY);
     modelMat.rotate(b, rotAxisX);
     modelMat.scale(QVector3D(0.7f, 0.7f, 0.7f));
-    m_progColor->setUniformValue(16, silver.ambient);
-    m_progColor->setUniformValue(17, silver.diffuse);
-    m_progColor->setUniformValue(18, silver.specular);
+    m_progColor->setUniformValue(16, this->materialChecked ? this->rotationA / 180.f * QVector3D(1, 1, 1) : silver.ambient);
+    m_progColor->setUniformValue(17, this->materialChecked ? this->rotationB / 180.f * QVector3D(1, 1, 1) : silver.diffuse);
+    m_progColor->setUniformValue(18, this->materialChecked ? this->rotationC / 180.f * QVector3D(1, 1, 1) : silver.specular);
     m_progColor->setUniformValue(19, silver.shininess);
     m_progColor->setUniformValue(0, projMat * cameraDirection * modelMat);
     m_progColor->setUniformValue(2, modelMat);
-    drawTexture(m_texSilver);
+    drawTexture();
     model2.drawElements();
 
     //inner
@@ -359,13 +455,13 @@ void MyGLWidget::scaleTransformRotate() {
     cameraDirection.rotate(a * camMod, rotAxisX);
     cameraDirection.rotate(b * camMod, rotAxisY);
     cameraDirection.rotate(c * camMod, rotAxisX);
-    m_progColor->setUniformValue(16, bronze.ambient);
-    m_progColor->setUniformValue(17, bronze.diffuse);
-    m_progColor->setUniformValue(18, bronze.specular);
+    m_progColor->setUniformValue(16, this->materialChecked ? this->rotationA / 180.f * QVector3D(1, 1, 1) : bronze.ambient);
+    m_progColor->setUniformValue(17, this->materialChecked ? this->rotationB / 180.f * QVector3D(1, 1, 1) : bronze.diffuse);
+    m_progColor->setUniformValue(18, this->materialChecked ? this->rotationC / 180.f * QVector3D(1, 1, 1) : bronze.specular);
     m_progColor->setUniformValue(19, bronze.shininess);
     m_progColor->setUniformValue (0, projMat * cameraDirectionMVP * modelMat);
     m_progColor->setUniformValue(2, modelMat);
-    drawTexture(m_texBronze);
+    drawTexture();
     model3.drawElements();
 
     //sphere
@@ -375,17 +471,17 @@ void MyGLWidget::scaleTransformRotate() {
     modelMat.rotate(b, rotAxisY);
     modelMat.rotate(float(timer.elapsed() / 60) * 5.0f, rotAxisZ);
     modelMat.translate(QVector3D(-16.0f, 0.0f, 0.0f));
-    m_progColor->setUniformValue(16, ruby.ambient);
-    m_progColor->setUniformValue(17, ruby.diffuse);
-    m_progColor->setUniformValue(18, ruby.specular);
+    m_progColor->setUniformValue(16, this->materialChecked ? this->rotationA / 180.f * QVector3D(1, 1, 1) : ruby.ambient);
+    m_progColor->setUniformValue(17, this->materialChecked ? this->rotationB / 180.f * QVector3D(1, 1, 1) : ruby.diffuse);
+    m_progColor->setUniformValue(18, this->materialChecked ? this->rotationC / 180.f * QVector3D(1, 1, 1) : ruby.specular);
     m_progColor->setUniformValue(19, ruby.shininess);
     m_progColor->setUniformValue(0, projMat * cameraDirectionMVP * modelMat);
     m_progColor->setUniformValue(2, modelMat);
-    drawTexture(m_texRuby);
+    drawTexture();
     sphere.drawElements();
 }
 
-void MyGLWidget::drawTexture(GLuint tex) {
+void MyGLWidget::drawTexture() {
     glActiveTexture (GL_TEXTURE0);
     glBindTexture (GL_TEXTURE_CUBE_MAP, skybox.getCubeTex());
 
@@ -399,6 +495,31 @@ void MyGLWidget::updateProjectionMatrix() {
 
 void MyGLWidget::resizeGL(int w, int h) {
     updateProjectionMatrix();
+
+    glDeleteTextures(1, &colorTex);
+    glDeleteTextures(1, &depthTex);
+
+    glGenTextures(1, &colorTex);
+    glBindTexture (GL_TEXTURE_2D, colorTex);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, w, h);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTex, 0);
+
+    glGenTextures(1, &depthTex);
+    glBindTexture(GL_TEXTURE_2D, depthTex);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT16, w, h);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTex, 0);
+
+    Q_ASSERT(glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
 }
 
 float MyGLWidget::rgbToFloat(int rgb) {
@@ -423,9 +544,20 @@ void MyGLWidget::printContextInfo() {
 void MyGLWidget::onMessageLogged(QOpenGLDebugMessage message) {
     //std::cout << message.message().toStdString() << std::endl;
     //use this if qDebug output is not accessible
-    if(message.type() != QOpenGLDebugMessage::OtherType) {
+    //if(message.type() != QOpenGLDebugMessage::OtherType) {
         qDebug()<<message;
-    }
+    //}
+}
+
+void MyGLWidget::takeScreenshot() {
+    QImage img (size(), QImage::Format_RGBA8888);
+
+    makeCurrent();
+    glBindTexture(GL_TEXTURE_2D, colorTex);
+    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, img.bits());
+    doneCurrent();
+
+    img.mirrored(false, true).save("CGScreenshot.png");
 }
 
 void MyGLWidget::keyPressEvent(QKeyEvent *event) {
@@ -455,11 +587,28 @@ void MyGLWidget::keyPressEvent(QKeyEvent *event) {
         this->cameraTarget.setY (this->cameraTarget.y() + 0.2f);
     } else if(event->key() == Qt::Key_F) {
         this->cameraTarget.setY (this->cameraTarget.y() - 0.2f);
+    } else if(event->key() == Qt::Key_P) {
+        takeScreenshot();
     } else {
         QOpenGLWidget::keyPressEvent(event);
     }
 
     qInfo() << "Camera Position = " << this->m_CameraPos;
+}
+
+void MyGLWidget::setGaussActive(bool value) {
+    this->gaussActive = !this->gaussActive;
+}
+
+void MyGLWidget::setGaussIntensity(int value) {
+    if(this->gaussIntensity != value) {
+        this->gaussIntensity = value;
+        emit this->gaussIntensityChanged(value);
+    }
+}
+
+void MyGLWidget::setDepth(bool value) {
+    this->depthChecked = !this->depthChecked;
 }
 
 void MyGLWidget::setFOV(int value) {
@@ -478,6 +627,10 @@ void MyGLWidget::setAngle(int value) {
 
         //updateProjectionMatrix();
     }
+}
+
+void MyGLWidget::setMaterial(bool value) {
+    this->materialChecked = !this->materialChecked;
 }
 
 void MyGLWidget::setProjectionMode(bool value) {

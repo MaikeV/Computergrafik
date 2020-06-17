@@ -1,4 +1,4 @@
-#version 330 core
+#version 430 core
 #extension GL_ARB_explicit_uniform_location : enable
 #extension GL_ARB_separate_shader_objects : enable
 #define NUM_LS 5
@@ -69,10 +69,9 @@ void main(void) {
     }
     //vec3 brightness = calcPhongLight(viewDirection, lightDirection);
     //vec3 R = reflect(-viewDirection, vNormal);
-    vec3 R = refract(-viewDirection, vNormal, 1.0f / 2.42);
+    vec3 R = refract(-viewDirection, vNormal, 1.0f / 2.42); //diamond
 
     vec4 texel = texture(cubeMap, R);
-
 
     fragColor = vec4((texel.rgb * result), 1.0);
     //fragTexture = texture(tex0, vTexCoord);

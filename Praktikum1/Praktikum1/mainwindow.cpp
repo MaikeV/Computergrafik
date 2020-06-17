@@ -25,6 +25,10 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
     connect(ui->btnReset, &QPushButton::clicked, this, &MainWindow::reset);
     connect(ui->chbAnimation, &QCheckBox::toggled, ui->openGLWidget, &MyGLWidget::setIsAnimated);
     connect(ui->chbSetCamera, &QCheckBox::toggled, ui->openGLWidget, &MyGLWidget::setCameraToCenter);
+    connect(ui->chbMaterial, &QCheckBox::toggled, ui->openGLWidget, &MyGLWidget::setMaterial);
+    connect(ui->chbDepth, &QCheckBox::toggled, ui->openGLWidget, &MyGLWidget::setDepth);
+    connect(ui->chbGauss, &QCheckBox::toggled, ui->openGLWidget, &MyGLWidget::setGaussActive);
+    connect(ui->hsGauss, &QSlider::valueChanged, ui->openGLWidget, &MyGLWidget::setGaussIntensity);
 }
 
 MainWindow::~MainWindow() {
@@ -37,6 +41,8 @@ void MainWindow::reset() {
     ui->vsAngle->setValue (75);
     ui->spAngle->setValue (75);
     ui->rbPerspective->setChecked (true);
+    ui->chbMaterial->setChecked(false);
+    ui->chbDepth->setChecked(false);
 
     ui->dsbNear->setValue (0.1);
     ui->dsbFar->setValue (100);

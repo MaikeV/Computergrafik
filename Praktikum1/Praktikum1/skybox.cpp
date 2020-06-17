@@ -52,7 +52,7 @@ void SkyBox::init() {
 }
 
 void SkyBox::draw(QMatrix4x4 &projection, QMatrix4x4 view) {
-    glDepthMask(GL_FALSE);
+    //glDepthMask(GL_FALSE);
 
 //    QMatrix4x4 view2;
 //    view2.lookAt (QVector3D(0, 0, 0), QVector3D(0, 0, -1), QVector3D(0, 1, 0));
@@ -77,7 +77,7 @@ void SkyBox::draw(QMatrix4x4 &projection, QMatrix4x4 view) {
     //Release VAO
     //m_vao.release();
 
-    glDepthMask(GL_TRUE);
+    //glDepthMask(GL_TRUE);
 }
 
 void SkyBox::loadCubemap() {

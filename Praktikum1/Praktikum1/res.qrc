@@ -25,5 +25,9 @@
         <file>silver.jpg</file>
         <file>gimbalNew.obj</file>
         <file>gimbal_suspensionNew.obj</file>
+        <file>depthShader.frag</file>
+        <file>depthShader.vert</file>
+        <file>computeShader.comp</file>
+        <file>gauss_filter.h</file>
     </qresource>
 </RCC>

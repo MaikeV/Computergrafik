@@ -24,6 +24,7 @@ SOURCES += \
 
 HEADERS += \
     MyGLWidget.h \
+    gauss_filter.h \
     mainwindow.h \
     modelloader/model.h \
     modelloader/modelloader/modelloader.h \
@@ -39,6 +40,9 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 DISTFILES += \
     colorShader.frag \
+    computeShader.comp \
+    depthShader.frag \
+    depthShader.vert \
     gimbal.obj \
     lightShader.frag \
     lightShader.vert \

@@ -4,13 +4,13 @@
 #include <QWidget>
 #include <QOpenGLWidget>
 #include <QVector3D>
-#include <QOpenGLFunctions_3_3_Core>
+#include <QOpenGLFunctions_4_3_Core>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLDebugLogger>
 #include <QOpenGLBuffer>
 #include <QOpenGLVertexArrayObject>
 
-class SkyBox : QOpenGLFunctions_3_3_Core{
+class SkyBox : QOpenGLFunctions_4_3_Core{
 private:
     QImage right;
     QImage left;

@@ -20,6 +20,7 @@ private:
     bool projectionModeIsPerspective = true;
     bool isAnimated = false;
     bool cameraCenter = false;
+    bool materialChecked = false;
     double near = 0.1;
     double far = 100;
     int rotationA = 0;
@@ -128,7 +129,7 @@ private:
     float rgbToFloat(int rgb);
     void printContextInfo();
     GLuint initTexture(GLuint m_texIce, QImage texImage);
-    void drawTexture(GLuint tex);
+    void drawTexture();
     void updateProjectionMatrix();
 
 public:
@@ -170,6 +171,7 @@ public:
     void resizeGL(int w, int h) override;
 
 public slots:
+    void setMaterial(bool value);
     void setIsAnimated(bool value);
     void setCameraToCenter(bool value);
     void setFOV(int value);
@@ -183,6 +185,7 @@ public slots:
     void onMessageLogged(QOpenGLDebugMessage message);
 
 signals:
+    void materialCheckedChanged(bool value);
     void cameraToCenterChanged(bool cameraToCenter);
     void isAnimatedChanged(bool isAnimated);
     void adjustNear(double value);

@@ -326,11 +326,11 @@ void MyGLWidget::scaleTransformRotate() {
     modelMat.rotate(a, rotAxisX);
     m_progColor->setUniformValue(0, projMat * cameraDirection * modelMat);
     m_progColor->setUniformValue(2, modelMat);
-    m_progColor->setUniformValue(16, gold.ambient);
-    m_progColor->setUniformValue(17, gold.diffuse);
-    m_progColor->setUniformValue(18, gold.specular);
+    m_progColor->setUniformValue(16, this->materialChecked ? this->rotationA / 180.f * QVector3D(1, 1, 1) : gold.ambient);
+    m_progColor->setUniformValue(17, this->materialChecked ? this->rotationB / 180.f * QVector3D(1, 1, 1) : gold.diffuse);
+    m_progColor->setUniformValue(18, this->materialChecked ? this->rotationC / 180.f * QVector3D(1, 1, 1) : gold.specular);
     m_progColor->setUniformValue(19, gold.shininess);
-    drawTexture(m_texGold);
+    drawTexture();
     model.drawElements();
 
     QMatrix4x4 cameraDirectionMVP = cameraDirection;
@@ -341,13 +341,13 @@ void MyGLWidget::scaleTransformRotate() {
     modelMat.rotate(a, -rotAxisY);
     modelMat.rotate(b, rotAxisX);
     modelMat.scale(QVector3D(0.7f, 0.7f, 0.7f));
-    m_progColor->setUniformValue(16, silver.ambient);
-    m_progColor->setUniformValue(17, silver.diffuse);
-    m_progColor->setUniformValue(18, silver.specular);
+    m_progColor->setUniformValue(16, this->materialChecked ? this->rotationA / 180.f * QVector3D(1, 1, 1) : silver.ambient);
+    m_progColor->setUniformValue(17, this->materialChecked ? this->rotationB / 180.f * QVector3D(1, 1, 1) : silver.diffuse);
+    m_progColor->setUniformValue(18, this->materialChecked ? this->rotationC / 180.f * QVector3D(1, 1, 1) : silver.specular);
     m_progColor->setUniformValue(19, silver.shininess);
     m_progColor->setUniformValue(0, projMat * cameraDirection * modelMat);
     m_progColor->setUniformValue(2, modelMat);
-    drawTexture(m_texSilver);
+    drawTexture();
     model2.drawElements();
 
     //inner
@@ -359,13 +359,13 @@ void MyGLWidget::scaleTransformRotate() {
     cameraDirection.rotate(a * camMod, rotAxisX);
     cameraDirection.rotate(b * camMod, rotAxisY);
     cameraDirection.rotate(c * camMod, rotAxisX);
-    m_progColor->setUniformValue(16, bronze.ambient);
-    m_progColor->setUniformValue(17, bronze.diffuse);
-    m_progColor->setUniformValue(18, bronze.specular);
+    m_progColor->setUniformValue(16, this->materialChecked ? this->rotationA / 180.f * QVector3D(1, 1, 1) : bronze.ambient);
+    m_progColor->setUniformValue(17, this->materialChecked ? this->rotationB / 180.f * QVector3D(1, 1, 1) : bronze.diffuse);
+    m_progColor->setUniformValue(18, this->materialChecked ? this->rotationC / 180.f * QVector3D(1, 1, 1) : bronze.specular);
     m_progColor->setUniformValue(19, bronze.shininess);
     m_progColor->setUniformValue (0, projMat * cameraDirectionMVP * modelMat);
     m_progColor->setUniformValue(2, modelMat);
-    drawTexture(m_texBronze);
+    drawTexture();
     model3.drawElements();
 
     //sphere
@@ -375,17 +375,17 @@ void MyGLWidget::scaleTransformRotate() {
     modelMat.rotate(b, rotAxisY);
     modelMat.rotate(float(timer.elapsed() / 60) * 5.0f, rotAxisZ);
     modelMat.translate(QVector3D(-16.0f, 0.0f, 0.0f));
-    m_progColor->setUniformValue(16, ruby.ambient);
-    m_progColor->setUniformValue(17, ruby.diffuse);
-    m_progColor->setUniformValue(18, ruby.specular);
+    m_progColor->setUniformValue(16, this->materialChecked ? this->rotationA / 180.f * QVector3D(1, 1, 1) : ruby.ambient);
+    m_progColor->setUniformValue(17, this->materialChecked ? this->rotationB / 180.f * QVector3D(1, 1, 1) : ruby.diffuse);
+    m_progColor->setUniformValue(18, this->materialChecked ? this->rotationC / 180.f * QVector3D(1, 1, 1) : ruby.specular);
     m_progColor->setUniformValue(19, ruby.shininess);
     m_progColor->setUniformValue(0, projMat * cameraDirectionMVP * modelMat);
     m_progColor->setUniformValue(2, modelMat);
-    drawTexture(m_texRuby);
+    drawTexture();
     sphere.drawElements();
 }
 
-void MyGLWidget::drawTexture(GLuint tex) {
+void MyGLWidget::drawTexture() {
     glActiveTexture (GL_TEXTURE0);
     glBindTexture (GL_TEXTURE_CUBE_MAP, skybox.getCubeTex());
 
@@ -478,6 +478,10 @@ void MyGLWidget::setAngle(int value) {
 
         //updateProjectionMatrix();
     }
+}
+
+void MyGLWidget::setMaterial(bool value) {
+    this->materialChecked = !this->materialChecked;
 }
 
 void MyGLWidget::setProjectionMode(bool value) {
