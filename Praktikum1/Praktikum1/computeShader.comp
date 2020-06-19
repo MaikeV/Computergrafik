@@ -5,13 +5,46 @@
 // Ignore the following line , it ' s not relevant for now
 layout( local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 
-layout(location = 0, rgba8) restrict uniform image2D someImage;
-//layout(location = 0, rgba8) restrict out image
+layout(binding = 0, rgba8) readonly restrict uniform image2D sourceImage;
+layout(binding = 1, rgba8) writeonly restrict uniform image2D destImage;
+layout(location = 0) uniform ivec2 direction;
+layout(location = 1) uniform int filterSize;
+layout(location = 2) uniform float blurFilter[15];
+
+ivec2 clampCoord(ivec2 base, ivec2 offset, ivec2 imgSize) {
+  ivec2 neighborCoord = base + offset;
+
+  neighborCoord = min(neighborCoord, imgSize - ivec2(1));
+  neighborCoord = max(neighborCoord, ivec2(0));
+
+  return neighborCoord;
+}
 
 void main () {
-  vec4 image = imageLoad(someImage, ivec2(gl_GlobalInvocationID.xy));
-  vec4 color = image * vec4(1.f, 0.55f, 1.f, 1.f);
+  ivec2 coords = ivec2(gl_GlobalInvocationID.xy);
+  ivec2 size = imageSize(sourceImage);
 
-  imageStore(someImage, ivec2(gl_GlobalInvocationID.xy), color);
+  int middleIndex = filterSize / 2;
 
+  //vec4 image = imageLoad(sourceImage, ivec2(gl_GlobalInvocationID.xy));
+  vec3 destPixel = imageLoad(sourceImage, coords).xyz * blurFilter[middleIndex];
+
+  for (int i = 0; i < middleIndex; i++) {
+    ivec2 offset = direction * ivec2(middleIndex - i);
+    ivec2 neighborCoordLeft = clampCoord(coords, -offset, size);
+
+    destPixel += imageLoad(sourceImage, neighborCoordLeft).xyz * blurFilter[i];
+  }
+
+  for (int i = middleIndex + 1; i < filterSize; i++) {
+    ivec2 offset = direction * ivec2(i);
+    ivec2 neighborCoordRight = clampCoord(coords, offset, size);
+
+    destPixel += imageLoad(sourceImage, neighborCoordRight).xyz * blurFilter[i];
+  }
+
+  imageStore(destImage, coords, vec4(destPixel, 1));
+
+  // vec4 color = image * vec4(1.f, 0.55f, 1.f, 1.f);
+  // imageStore(someImage, ivec2(gl_GlobalInvocationID.xy), color);
 }

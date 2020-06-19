@@ -1,6 +1,7 @@
 #include "MyGLWidget.h"
 #include <QDebug>
 #include <QKeyEvent>
+#include "gauss_filter.h"
 
 void MyGLWidget::initializeGL() {
     bool success = initializeOpenGLFunctions ();
@@ -129,6 +130,14 @@ void MyGLWidget::loadTextures() {
 //    m_texIce = initTexture(m_texIce, texImg);
     //fbo texture
     //Generate Frame Buffer Object
+
+    glGenTextures(1, &blurTex);
+    glBindTexture(GL_TEXTURE_2D, blurTex);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, size().width(), size().height());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
     glGenFramebuffers(1, &m_fbo);
     glBindFramebuffer (GL_FRAMEBUFFER, m_fbo);
     glEnable(GL_DEPTH_TEST);
@@ -305,47 +314,65 @@ void MyGLWidget::paintGL() {
     glBindBufferBase(GL_UNIFORM_BUFFER, 0, uboLights);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(ls), ls);
 
-
     scaleTransformRotate();
 
-    //Depth Stuff
     glBindFramebuffer(GL_FRAMEBUFFER, defaultFramebufferObject());
-    glDisable(GL_DEPTH_TEST);
-    glBindVertexArray(m_vao);
+     glClear(GL_COLOR_BUFFER_BIT);
 
-    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    if (this->gaussActive) {
+        m_compShader->bind();
 
-    glActiveTexture (GL_TEXTURE0);
-    glBindTexture (GL_TEXTURE_2D, depthTex);
+        glMemoryBarrier(GL_FRAMEBUFFER_BARRIER_BIT);
+        glBindImageTexture(0, colorTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
+        glBindImageTexture(1, blurTex, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
+        //glMemoryBarrier(GL_ALL_BARRIER_BITS); //TODO: replace with right Barrier Bit
 
-    m_compShader->bind();
+        std::vector<double> filter = generate1DGauss(this->gaussIntensity);
 
-    GLuint unit = 0;
-    glBindImageTexture(unit, colorTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
+        std::vector<float> filterF(filter.begin(), filter.end());
 
-    blur(this->gaussIntensity);
+        glUniform1fv(2, filterF.size(), filterF.data());
+        glUniform1i(1, filterF.size());
 
-    glDispatchCompute(this->width(), this->height(), 1.f);
+        // filter horizontally
+        glUniform2i(0, 1, 0);
+        glDispatchCompute(this->width(), this->height(), 1);
 
-    m_depthShader->bind();
+        glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+        glBindImageTexture(0, blurTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
+        glBindImageTexture(1, colorTex, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
+
+        //filter vertically
+        glUniform2i(0, 0, 1);
+        glDispatchCompute(this->width(), this->height(), 1);
+
+        glMemoryBarrier(GL_FRAMEBUFFER_BARRIER_BIT);
+        m_compShader->release();
+
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fbo);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, defaultFramebufferObject());
+        glBlitFramebuffer(0, 0, width(), height(), 0, 0, width(), height(), GL_COLOR_BUFFER_BIT, GL_LINEAR);
+    }
 
     if (this->depthChecked) {
+        glDisable(GL_DEPTH_TEST);
+        glBindVertexArray(m_vao);
+
+        glActiveTexture (GL_TEXTURE0);
+        glBindTexture (GL_TEXTURE_2D, depthTex);
+
+        m_depthShader->bind();
+
         m_depthShader->setUniformValue(90, 0);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-    } else {
+    } else if(!this->gaussActive){
         glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fbo);
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, defaultFramebufferObject());
 
-        glBlitFramebuffer(0, 0, this->width(), this->height(), 0, 0, this->width(), this->height(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        glBlitFramebuffer(0, 0, this->width(), this->height(), 0, 0, this->width(), this->height(), GL_COLOR_BUFFER_BIT, GL_LINEAR);
     }
 
     update();
-}
-
-void MyGLWidget::blur(int intensity) {
-    std::vector<double> filter = generate1DGauss(intensity);
-
-
 }
 
 void MyGLWidget::rstLights() {
@@ -498,6 +525,14 @@ void MyGLWidget::resizeGL(int w, int h) {
 
     glDeleteTextures(1, &colorTex);
     glDeleteTextures(1, &depthTex);
+    glDeleteTextures(1, &blurTex);
+
+    glGenTextures(1, &blurTex);
+    glBindTexture(GL_TEXTURE_2D, blurTex);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, w, h);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     glGenTextures(1, &colorTex);
     glBindTexture (GL_TEXTURE_2D, colorTex);
@@ -544,9 +579,9 @@ void MyGLWidget::printContextInfo() {
 void MyGLWidget::onMessageLogged(QOpenGLDebugMessage message) {
     //std::cout << message.message().toStdString() << std::endl;
     //use this if qDebug output is not accessible
-    //if(message.type() != QOpenGLDebugMessage::OtherType) {
+    if(message.type() != QOpenGLDebugMessage::OtherType) {
         qDebug()<<message;
-    //}
+    }
 }
 
 void MyGLWidget::takeScreenshot() {
@@ -602,8 +637,8 @@ void MyGLWidget::setGaussActive(bool value) {
 
 void MyGLWidget::setGaussIntensity(int value) {
     if(this->gaussIntensity != value) {
-        this->gaussIntensity = value;
-        emit this->gaussIntensityChanged(value);
+        this->gaussIntensity = value * 2 + 1;
+        emit this->gaussIntensityChanged(this->gaussIntensity);
     }
 }
 

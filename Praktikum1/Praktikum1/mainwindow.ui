@@ -221,20 +221,23 @@
               <item>
                <widget class="QLabel" name="label">
                 <property name="text">
-                 <string>Intensity</string>
+                 <string>3</string>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="QSlider" name="hsGauss">
+                <property name="toolTip">
+                 <string extracomment="Intensity"/>
+                </property>
                 <property name="minimum">
-                 <number>3</number>
+                 <number>1</number>
                 </property>
                 <property name="maximum">
-                 <number>15</number>
+                 <number>7</number>
                 </property>
                 <property name="singleStep">
-                 <number>2</number>
+                 <number>1</number>
                 </property>
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
@@ -451,6 +454,8 @@
    <slots>
     <signal>adjustNear(double)</signal>
     <signal>adjustFar(double)</signal>
+    <signal>gaussIntensityChanged(int)</signal>
+    <slot>setGaussIntensity(int)</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -463,8 +468,8 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>85</x>
-     <y>199</y>
+     <x>97</x>
+     <y>180</y>
     </hint>
     <hint type="destinationlabel">
      <x>65</x>
@@ -480,7 +485,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>179</x>
-     <y>199</y>
+     <y>180</y>
     </hint>
     <hint type="destinationlabel">
      <x>147</x>
@@ -499,8 +504,8 @@
      <y>115</y>
     </hint>
     <hint type="destinationlabel">
-     <x>92</x>
-     <y>199</y>
+     <x>97</x>
+     <y>180</y>
     </hint>
    </hints>
   </connection>
@@ -531,8 +536,8 @@
      <y>399</y>
     </hint>
     <hint type="destinationlabel">
-     <x>121</x>
-     <y>489</y>
+     <x>168</x>
+     <y>681</y>
     </hint>
    </hints>
   </connection>
@@ -547,8 +552,40 @@
      <y>480</y>
     </hint>
     <hint type="destinationlabel">
-     <x>160</x>
-     <y>529</y>
+     <x>168</x>
+     <y>713</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>hsGauss</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>openGLWidget</receiver>
+   <slot>setGaussIntensity(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>105</x>
+     <y>348</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>423</x>
+     <y>294</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>openGLWidget</sender>
+   <signal>gaussIntensityChanged(int)</signal>
+   <receiver>label</receiver>
+   <slot>setNum(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>253</x>
+     <y>342</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>39</x>
+     <y>352</y>
     </hint>
    </hints>
   </connection>

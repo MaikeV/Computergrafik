@@ -1398,7 +1398,16 @@ MyGLWidget.o: ../Praktikum1/MyGLWidget.cpp ../Praktikum1/MyGLWidget.h \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/QString \
 		../Praktikum1/skybox.h \
 		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtCore/QDebug \
-		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/QKeyEvent
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/QKeyEvent \
+		../Praktikum1/gauss_filter.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtOpenGL/QGLWidget \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtOpenGL/qgl.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qpaintengine.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qpainter.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qtextoption.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtGui/qpen.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtOpenGL/qglcolormap.h \
+		/home/mauske/Development/Qt/5.14.2/gcc_64/include/QtOpenGL/qtopenglglobal.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o MyGLWidget.o ../Praktikum1/MyGLWidget.cpp
 
 main.o: ../Praktikum1/main.cpp ../Praktikum1/mainwindow.h \

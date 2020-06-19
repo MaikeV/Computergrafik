@@ -11,7 +11,6 @@
 #include <QElapsedTimer>
 #include "modelloader/model.h"
 #include "skybox.h"
-#include "gauss_filter.h"
 
 class MyGLWidget : public QOpenGLWidget, private QOpenGLFunctions_4_3_Core {
     Q_OBJECT
@@ -50,6 +49,7 @@ private:
     GLuint m_fbo;
     GLuint colorTex;
     GLuint depthTex;
+    GLuint blurTex;
     GLuint m_vbo;
     GLuint m_ibo;
     GLuint m_vao;
@@ -131,7 +131,6 @@ private:
     Material ruby;
     Material silver;
 
-    void blur(int intensity);
     void takeScreenshot();
     void setLights();
     void loadModels();
